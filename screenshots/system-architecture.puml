@@ -1,0 +1,70 @@
+@startuml "system-architecture-c4"
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 200
+skinparam maxMessageSize 150
+skinparam BackgroundColor #101712
+
+' Override C4 styles to match the dark theme of the blog
+UpdateElementStyle("person", $bgColor="#1f6f52", $fontColor="#ffffff", $borderColor="#8fc9a3")
+UpdateElementStyle("container", $bgColor="#102019", $fontColor="#ffffff", $borderColor="#8fc9a3")
+UpdateElementStyle("system", $bgColor="#1e293b", $fontColor="#ffffff", $borderColor="#64748b")
+UpdateElementStyle("system_ext", $bgColor="#2d1b0e", $fontColor="#f8f0df", $borderColor="#c98317")
+UpdateBoundaryStyle("system", $bgColor="transparent", $fontColor="#b8c2b0", $borderColor="#28453a", $borderStyle="dashed")
+UpdateBoundaryStyle("container", $bgColor="transparent", $fontColor="#b8c2b0", $borderColor="#28453a", $borderStyle="dashed")
+UpdateRelStyle($lineColor="#b8c2b0", $textColor="#b8c2b0")
+
+title <color:#edf7f1>Home Energy OS - C4 Container Architecture</color>
+
+Person(operator, "Operator", "Views dashboards, applies manual overrides (e.g. EV force-charge)")
+
+System_Boundary(host, "solar-gateway (Home Assistant Host)") {
+    ContainerDb(recorder, "Recorder & History", "SQLite", "Stores time-series telemetry and policy state")
+    
+    Container(ha, "Home Assistant", "Python Core", "Data Fusion, State Graph, API")
+    Container(emhass, "EMHASS Optimizer", "Python Add-on", "Solves 24h linear programming problem for deferrable load slots (EV, EcoFlows)")
+    
+    Container_Boundary(control_plane, "Control Plane (Energy Manager)") {
+        Container(nodered, "Node-RED Executor", "Node.js", "Triggers every 2m. Normalizes facts, queries engine, enforces safety gates, applies 30m cooldowns, safely actuates targets")
+        Container(engine, "Policy Engine", "Pure JS", "Stateless 1000-line logic. Determines Modes (SOLAR_HOLD, STORM_FILL, etc.) and intents from raw facts")
+        Container(sentinel, "Drift Sentinel", "Python/JS Timer", "Runs every 5m. Checks checksums, re-runs engine against HA state, alerts if Node-RED output drifted")
+    }
+}
+
+System_Boundary(vendors, "Hardware & Vendor Clouds") {
+    System_Ext(enphase, "Enphase Envoy", "Per-array microinverter production (Local)")
+    System_Ext(span, "SPAN Panel", "Per-circuit power metering (Local)")
+    System_Ext(franklin_modbus, "FranklinWH Modbus", "Fast SoC, Grid status, Pack temps (Local)")
+    System_Ext(franklin_cloud, "FranklinWH Cloud", "Battery read/write (Standby, Solar-Fill, Limits)")
+    System_Ext(ecoflow, "EcoFlow API", "Cloud polling for AC Output Limits & Target SoC")
+    System_Ext(chargepoint, "ChargePoint CPH50", "Cloud polling for EV target Amps")
+    System_Ext(rivian, "Rivian R1T", "Vehicle telemetry & SoC limits")
+}
+
+Rel_D(operator, ha, "Views live data & toggles", "HTTPS")
+Rel_D(operator, nodered, "Disables live actuation gate", "Input Boolean")
+
+Rel_U(enphase, ha, "Publishes solar Watts", "Local API")
+Rel_U(span, ha, "Publishes load Watts", "Local API")
+Rel_U(franklin_modbus, ha, "Publishes fast metrics", "Modbus TCP")
+Rel_U(ecoflow, ha, "Publishes UPS status", "Cloud API")
+Rel_U(chargepoint, ha, "Publishes charging status", "Cloud API")
+Rel_U(rivian, ha, "Publishes vehicle SoC", "Cloud API")
+
+Rel_R(ha, recorder, "Persists state", "SQL")
+Rel_L(recorder, emhass, "Provides historical trends", "SQL/API")
+Rel_R(emhass, ha, "Publishes deferrable load plan", "REST")
+
+Rel_D(ha, nodered, "Provides normalized facts (solar, load, forecasts, limits)", "WebSocket")
+Rel_R(nodered, engine, "Passes facts & current state", "Function Call")
+Rel_L(engine, nodered, "Returns desired state, mode, intent", "JSON")
+
+Rel_U(sentinel, ha, "Reads live state", "REST")
+Rel_L(sentinel, engine, "Re-evaluates policy independently", "Function Call")
+Rel_D(sentinel, nodered, "Compares output vs expected", "JSON Verification")
+
+Rel_D(nodered, franklin_cloud, "Actuates Standby/Solar-Fill/TOU modes", "Cloud API")
+Rel_D(nodered, ecoflow, "Actuates Safety-Shed / Clamp Power", "Cloud API")
+Rel_D(nodered, chargepoint, "Actuates Force-Charge / Set Amps", "Cloud API")
+
+@enduml
