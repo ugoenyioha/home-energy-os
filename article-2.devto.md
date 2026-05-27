@@ -5,7 +5,7 @@ description: A real power outage tested my home energy controller for the first 
 tags: homeassistant, nodered, postmortem, selfhosted
 canonical_url: https://ugoenyioha.github.io/home-energy-os/article-2.html
 series: Home Energy OS
-cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/state-machine-policy-engine.png
+cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/gateway-garage.png
 ---
 
 A few days after I published a long writeup about my home energy controller, there was a power outage at the house. I was not home. The controller, which I had described as a small mini-PC running Home Assistant and Node-RED in the garage, was — it turns out — plugged into the wrong outlet.
