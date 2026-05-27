@@ -3,18 +3,18 @@
 
 skinparam wrapWidth 200
 skinparam maxMessageSize 150
-skinparam BackgroundColor #101712
+skinparam BackgroundColor transparent
 
-' Override C4 styles to match the dark theme of the blog
-UpdateElementStyle("person", $bgColor="#1f6f52", $fontColor="#ffffff", $borderColor="#8fc9a3")
-UpdateElementStyle("container", $bgColor="#102019", $fontColor="#ffffff", $borderColor="#8fc9a3")
-UpdateElementStyle("system", $bgColor="#1e293b", $fontColor="#ffffff", $borderColor="#64748b")
-UpdateElementStyle("system_ext", $bgColor="#2d1b0e", $fontColor="#f8f0df", $borderColor="#c98317")
-UpdateBoundaryStyle("system", $bgColor="transparent", $fontColor="#b8c2b0", $borderColor="#28453a", $borderStyle="dashed")
-UpdateBoundaryStyle("container", $bgColor="transparent", $fontColor="#b8c2b0", $borderColor="#28453a", $borderStyle="dashed")
-UpdateRelStyle($lineColor="#b8c2b0", $textColor="#b8c2b0")
+' Override C4 styles to match the light theme of the blog
+UpdateElementStyle("person", $bgColor="#1f6f52", $fontColor="#ffffff", $borderColor="#1f6f52")
+UpdateElementStyle("container", $bgColor="#ffffff", $fontColor="#17211c", $borderColor="#1f6f52")
+UpdateElementStyle("system", $bgColor="#ffffff", $fontColor="#17211c", $borderColor="#66746b")
+UpdateElementStyle("system_ext", $bgColor="#ffffff", $fontColor="#17211c", $borderColor="#c98317")
+UpdateBoundaryStyle("system", $bgColor="transparent", $fontColor="#17211c", $borderColor="#66746b", $borderStyle="dashed")
+UpdateBoundaryStyle("container", $bgColor="transparent", $fontColor="#17211c", $borderColor="#66746b", $borderStyle="dashed")
+UpdateRelStyle($lineColor="#66746b", $textColor="#17211c")
 
-title <color:#edf7f1>Home Energy OS - C4 Container Architecture</color>
+title <color:#17211c>Home Energy OS - C4 Container Architecture</color>
 
 Person(operator, "Operator", "Views dashboards, applies manual overrides (e.g. EV force-charge)")
 
