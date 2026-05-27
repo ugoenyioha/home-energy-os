@@ -376,22 +376,21 @@ SoC” setting, the controller treats the standby toggle as one mode in a
 state machine driven by live conditions. The cascade for a normal day,
 with <code>cap = 85 %</code>, <code>deadband = 2 %</code>, and
 <code>daylight threshold = 500 W</code>, is:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> battery.soc <span class="op">&gt;=</span> cap <span class="kw">and</span> grid.is_exporting():</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Earn our keep: hold the cap as long as we are pushing to the grid</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Mode.SOLAR_HOLD(profile<span class="op">=</span><span class="st">&quot;standby&quot;</span>, charge<span class="op">=</span><span class="dv">0</span>, discharge<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> battery.soc <span class="op">&lt;</span> (cap <span class="op">-</span> deadband) <span class="kw">and</span> solar.surplus <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Under cap with room to charge: absorb the surplus</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Mode.SOLAR_FILL(profile<span class="op">=</span><span class="st">&quot;solar-fill&quot;</span>, charge<span class="op">=</span>solar.surplus)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> solar.production <span class="op">&gt;</span> daylight_threshold <span class="kw">and</span> solar.surplus <span class="op">&lt;=</span> <span class="dv">0</span>:</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sun is up but home load consumes it all: don&#39;t drain the battery yet</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Mode.SOLAR_HOLD(reason<span class="op">=</span><span class="st">&quot;daylight_deficit&quot;</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Evening, heavy clouds, or night: release the cap for peak shaving</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Mode.SELF_CONSUMPTION(profile<span class="op">=</span><span class="st">&quot;time_of_use&quot;</span>, limits<span class="op">=</span><span class="st">&quot;20kW / 20kW&quot;</span>)</span></code></pre></div>
+<pre><code>if battery.soc &gt;= cap and grid.is_exporting():
+    # Earn our keep: hold the cap as long as we are pushing to the grid
+    return Mode.SOLAR_HOLD(profile="standby", charge=0, discharge=0)
+
+elif battery.soc &lt; (cap - deadband) and solar.surplus &gt; 0:
+    # Under cap with room to charge: absorb the surplus
+    return Mode.SOLAR_FILL(profile="solar-fill", charge=solar.surplus)
+
+elif solar.production &gt; daylight_threshold and solar.surplus &lt;= 0:
+    # Sun is up but home load consumes it all: don't drain the battery yet
+    return Mode.SOLAR_HOLD(reason="daylight_deficit")
+
+else:
+    # Evening, heavy clouds, or night: release the cap for peak shaving
+    return Mode.SELF_CONSUMPTION(profile="time_of_use", limits="20kW / 20kW")</code></pre>
 <p>This is the soft cap homeowners are asking for. The battery holds at
 85 % whenever there is real solar export to support that hold —
 <em>exactly when the hold is earning its keep</em>. The moment surplus
