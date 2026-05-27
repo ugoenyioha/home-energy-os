@@ -1,6 +1,6 @@
 ---
 title: A Practical Home Energy OS with Home Assistant
-published: false
+published: true
 description: How a FranklinWH battery, an Enphase solar array, a SPAN panel, three EcoFlows, and a Rivian became one coherent controller using Home Assistant, Node-RED, and a small policy engine.
 tags: homeassistant, nodered, homeautomation, selfhosted
 canonical_url: https://ugoenyioha.github.io/home-energy-os/article.html
