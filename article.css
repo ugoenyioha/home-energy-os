@@ -164,14 +164,30 @@ div.sourceCode pre {
   padding: 24px;
 }
 
-/* Lightbox hover effect for the architecture diagram */
+/* Lightbox hover effect for ALL article images */
+body {
+  overflow-x: hidden;
+}
 a.diagram-lightbox {
   display: block;
   width: min(1120px, calc(100vw - 48px));
   max-width: none;
-  margin: 44px 50% 24px;
+  margin: 34px 50% 12px;
   transform: translateX(-50%);
   text-decoration: none;
+  border-radius: 18px;
+}
+a.diagram-lightbox img {
+  margin: 0;
+  transform: none;
+  width: 100%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  cursor: zoom-in;
+  display: block;
+}
+a.diagram-lightbox:hover img {
+  transform: scale(1.03);
+  box-shadow: 0 30px 90px rgba(46, 35, 19, 0.32);
 }
 a.diagram-lightbox img {
   margin: 0;

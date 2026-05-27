@@ -667,5 +667,20 @@ project’s own code. The drift sentinel runs as a systemd timer service
 on the HA host. The full ticket trail and architectural decisions are
 tracked in a private Plane workspace; happy to share specific commit
 references on request.</em></p>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('figure img, p > img').forEach(function (img) {
+      if (img.parentNode.tagName === 'A') return;
+      var link = document.createElement('a');
+      link.href = img.src;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'diagram-lightbox';
+      link.title = 'Click to view full size';
+      img.parentNode.insertBefore(link, img);
+      link.appendChild(img);
+    });
+  });
+</script>
 </body>
 </html>

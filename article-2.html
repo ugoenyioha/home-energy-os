@@ -245,5 +245,20 @@ safety logic, and the drift sentinel, which are this project’s own code.
 The fixes described above are committed and live in production; the
 physical move of the gateway to the EcoFlow pass-through is queued for
 the next time I’m in the garage with a flashlight.</em></p>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('figure img, p > img').forEach(function (img) {
+      if (img.parentNode.tagName === 'A') return;
+      var link = document.createElement('a');
+      link.href = img.src;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'diagram-lightbox';
+      link.title = 'Click to view full size';
+      img.parentNode.insertBefore(link, img);
+      link.appendChild(img);
+    });
+  });
+</script>
 </body>
 </html>
