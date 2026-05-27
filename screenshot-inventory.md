@@ -9,7 +9,7 @@ In current `article.md` / `article.html`:
 - `screenshots/franklin-apower-outside.png` — §2 (hardware). The aPower outside the house alongside the utility disconnect; grounds the abstract list of components in physical reality.
 - `screenshots/span-panel-open.png` — §2 (hardware). SPAN smart panel door open, every breaker LED-lit; visual anchor for the per-circuit metering claim.
 - `screenshots/sankey-night-real.png` — §4 (data fusion). Live SPAN-driven Sankey at night, EV charging session pulling 4.8 kW of the 12.8 kW grid flow; replaces the earlier hand-rendered illustration (superseded).
-- `screenshots/system-architecture-c4.png` — §5 (policy engine). PlantUML C4 Architectural flowchart showing Vendor Observers, Home Assistant State Fusion, Control Plane (Node-RED/Sentinel), and Hardware Actuators. Replaced the earlier `state-machine-policy-engine.png` and Mermaid versions.
+- `screenshots/system-architecture-light.png` — §5 (policy engine). PlantUML C4 Architectural flowchart showing Vendor Observers, Home Assistant State Fusion, Control Plane (Node-RED/Sentinel), and Hardware Actuators. Replaced the earlier `state-machine-policy-engine.png` and Mermaid versions.
 - `screenshots/churn-reduction-chart.png` — §6 evidence. Per-hour transition counts for `write_allowed` and `target_charge_w`, before/after the retune-fix deploy at 10:33 PDT. 97-98% reduction.
 - `screenshots/drift-sentinel-card.png` — §6 artifact. Card view of `sensor.energy_manager_policy_drift = aligned`, showing all three checksums match and noting the tamper-test that produced a `drifted_static` transition.
 - `screenshots/live-dashboard.png` — §9 closing. The deployed live dashboard at a steady-state moment with Franklin in SOLAR_HOLD, EV at target, EcoFlows waiting for a slot.

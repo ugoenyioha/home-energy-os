@@ -1,9 +1,9 @@
-@startuml "system-architecture-c4"
+@startuml "system-architecture-light"
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 skinparam wrapWidth 200
 skinparam maxMessageSize 150
-skinparam BackgroundColor transparent
+skinparam BackgroundColor #f7f1e5
 
 ' Override C4 styles to match the light theme of the blog
 UpdateElementStyle("person", $bgColor="#1f6f52", $fontColor="#ffffff", $borderColor="#1f6f52")
