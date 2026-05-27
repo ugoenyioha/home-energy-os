@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cross-Vendor Data Fusion</title>
+  <style>
+    :root {
+      --bg: #101712;
+      --paper: #f8f0df;
+      --ink: #f8f0df;
+      --muted: #b8c2b0;
+      --line: rgba(248, 240, 223, 0.18);
+      --solar: #f4c76d;
+      --grid: #ef9a76;
+      --franklin: #8fb7d9;
+      --ecoflow: #b8d88a;
+      --span: #c98317;
+      --safe: #8fc9a3;
+      --enphase: #f4c76d;
+      --policy: #b692e0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 50% -10%, rgba(143,201,163,0.08), transparent 32rem), linear-gradient(135deg, #0c130f, var(--bg));
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .shell { max-width: 1300px; margin: 0 auto; }
+    header { margin-bottom: 26px; padding: 18px 24px; border: 1px solid var(--line); border-radius: 18px; background: rgba(23,32,25,0.78); }
+    h1 { margin: 0 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 900px; }
+
+    .canvas {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(23,32,25,0.85);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.32);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .canvas-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .canvas-sub { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+    svg { width: 100%; height: auto; display: block; }
+
+    .node-label { font-size: 13px; font-weight: 600; fill: var(--ink); }
+    .node-meta { font-size: 11px; fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .node-power { font-size: 14px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .flow-label { font-size: 11px; fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .vendor-tag {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      fill: var(--muted);
+    }
+
+    .fusion-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .fusion-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      background: rgba(14,22,17,0.55);
+    }
+    .fusion-title {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .fusion-equation {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .fusion-equation .src { color: var(--paper); }
+    .fusion-equation .src.solar { color: var(--solar); }
+    .fusion-equation .src.grid { color: var(--grid); }
+    .fusion-equation .src.franklin { color: var(--franklin); }
+    .fusion-equation .src.ecoflow { color: var(--ecoflow); }
+    .fusion-equation .src.span { color: var(--span); }
+    .fusion-equation .op { color: var(--muted); margin: 0 4px; }
+    .fusion-equation .result { color: var(--safe); font-weight: 700; }
+    .fusion-equation .check { color: var(--safe); margin-left: 6px; }
+    .fusion-note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>Cross-vendor data fusion in practice</h1>
+      <div class="sub">
+        Live snapshot at 2026-05-25 18:46 PDT, after sunset has started but before the SOLAR_HOLD → SELF_CONSUMPTION transition.
+        Three independent measurements cross-check each other; one new metric (compute-only power) emerges from the difference.
+      </div>
+    </header>
+
+    <div class="canvas">
+      <div class="canvas-title">Live power flow &middot; what each vendor sees</div>
+      <svg viewBox="0 0 1240 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="solar-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#f4c76d" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#f4c76d" stop-opacity="0.25"/>
+          </linearGradient>
+          <linearGradient id="grid-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#ef9a76" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#ef9a76" stop-opacity="0.25"/>
+          </linearGradient>
+          <linearGradient id="home-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#8fc9a3" stop-opacity="0.30"/>
+            <stop offset="1" stop-color="#8fc9a3" stop-opacity="0.10"/>
+          </linearGradient>
+        </defs>
+
+        <!-- left column: sources -->
+        <g>
+          <rect x="60" y="50" width="140" height="74" rx="12" fill="rgba(244,199,109,0.10)" stroke="var(--solar)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="68" text-anchor="middle">Enphase</text>
+          <text class="node-label" x="130" y="88" text-anchor="middle">Solar production</text>
+          <text class="node-power" x="130" y="113" text-anchor="middle" fill="var(--solar)">1,010 W</text>
+
+          <rect x="60" y="160" width="140" height="74" rx="12" fill="rgba(239,154,118,0.10)" stroke="var(--grid)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="178" text-anchor="middle">SPAN main feed</text>
+          <text class="node-label" x="130" y="198" text-anchor="middle">Grid import</text>
+          <text class="node-power" x="130" y="223" text-anchor="middle" fill="var(--grid)">2,188 W</text>
+
+          <rect x="60" y="272" width="140" height="74" rx="12" fill="rgba(143,183,217,0.10)" stroke="var(--franklin)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="290" text-anchor="middle">FranklinWH</text>
+          <text class="node-label" x="130" y="310" text-anchor="middle">Battery (at cap)</text>
+          <text class="node-power" x="130" y="335" text-anchor="middle" fill="var(--franklin)">0 W &middot; 85%</text>
+        </g>
+
+        <!-- center: Home Assistant fusion node -->
+        <g>
+          <rect x="370" y="150" width="180" height="120" rx="14" fill="rgba(143,201,163,0.10)" stroke="var(--safe)" stroke-opacity="0.6" stroke-dasharray="4 4"/>
+          <text class="vendor-tag" x="460" y="170" text-anchor="middle">Home Assistant</text>
+          <text class="node-label" x="460" y="194" text-anchor="middle">Fused state graph</text>
+          <text class="node-meta" x="460" y="216" text-anchor="middle">5 vendors</text>
+          <text class="node-meta" x="460" y="232" text-anchor="middle">~200 entities</text>
+          <text class="node-meta" x="460" y="248" text-anchor="middle">recorder + statistics</text>
+        </g>
+
+        <!-- right: Home aggregate then circuits -->
+        <g>
+          <rect x="700" y="170" width="140" height="80" rx="12" fill="rgba(143,201,163,0.12)" stroke="var(--safe)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="770" y="190" text-anchor="middle">Home Load</text>
+          <text class="node-meta" x="770" y="208" text-anchor="middle">SPAN main</text>
+          <text class="node-power" x="770" y="234" text-anchor="middle" fill="var(--safe)">3,038 W</text>
+
+          <!-- circuit branches -->
+          <!-- Lighting circuit (with cluster) -->
+          <rect x="940" y="58" width="240" height="116" rx="12" fill="rgba(201,131,23,0.10)" stroke="var(--span)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="950" y="76">SPAN circuit "Lighting"</text>
+          <text class="node-meta" x="950" y="93">1,663 W total (one breaker)</text>
+          <!-- subdivision via D3M -->
+          <line x1="950" y1="105" x2="1170" y2="105" stroke="var(--line)" stroke-dasharray="3 3"/>
+          <text x="950" y="125" class="node-label" fill="var(--ecoflow)">— Compute cluster</text>
+          <text x="1170" y="125" class="node-power" text-anchor="end" fill="var(--ecoflow)">639 W</text>
+          <text x="950" y="142" class="node-meta">via Delta 3 Max pass-through</text>
+          <text x="950" y="160" class="node-label" fill="var(--solar)">— Lights only</text>
+          <text x="1170" y="160" class="node-power" text-anchor="end" fill="var(--solar)">~1,024 W</text>
+
+          <!-- Office UPS via D2M -->
+          <rect x="940" y="194" width="240" height="56" rx="12" fill="rgba(184,216,138,0.10)" stroke="var(--ecoflow)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="950" y="212">Delta 2 Max</text>
+          <text class="node-label" x="950" y="231">Office UPS pass-through</text>
+          <text class="node-power" x="1170" y="234" text-anchor="end" fill="var(--ecoflow)">369 W</text>
+
+          <!-- Kitchen + other -->
+          <rect x="940" y="268" width="240" height="56" rx="12" fill="rgba(248,240,223,0.04)" stroke="var(--line)"/>
+          <text class="vendor-tag" x="950" y="286">SPAN circuits</text>
+          <text class="node-label" x="950" y="305">Kitchen / HVAC / Other</text>
+          <text class="node-power" x="1170" y="308" text-anchor="end" fill="var(--paper)">~1,006 W</text>
+
+          <!-- Standby V2L (DP3) -->
+          <rect x="940" y="342" width="240" height="56" rx="12" fill="rgba(143,183,217,0.06)" stroke="var(--franklin)" stroke-opacity="0.4" stroke-dasharray="3 3"/>
+          <text class="vendor-tag" x="950" y="360">Delta Pro 3 (V2L buffer)</text>
+          <text class="node-label" x="950" y="379">Dormant near cap</text>
+          <text class="node-power" x="1170" y="382" text-anchor="end" fill="var(--franklin)">0 W &middot; 88%</text>
+        </g>
+
+        <!-- flows: solar -> HA -->
+        <path d="M 200 87  C 280 87,  290 170, 370 195" fill="none" stroke="url(#solar-flow)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 200 197 C 280 197, 290 200, 370 210" fill="none" stroke="url(#grid-flow)" stroke-width="18" stroke-linecap="round"/>
+        <path d="M 200 309 C 280 309, 290 250, 370 225" fill="none" stroke="rgba(143,183,217,0.18)" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 5"/>
+
+        <!-- HA -> home load -->
+        <path d="M 550 210 C 610 210, 630 210, 700 210" fill="none" stroke="url(#home-flow)" stroke-width="22" stroke-linecap="round"/>
+
+        <!-- home load -> circuits -->
+        <path d="M 840 195 C 880 100, 910 100, 940 110" fill="none" stroke="url(#home-flow)" stroke-width="16" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 840 215 C 880 218, 910 218, 940 222" fill="none" stroke="url(#home-flow)" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 840 230 C 880 280, 910 290, 940 296" fill="none" stroke="url(#home-flow)" stroke-width="9" stroke-linecap="round" opacity="0.7"/>
+
+        <!-- HA inbound badge -->
+        <text class="flow-label" x="284" y="80">solar.production</text>
+        <text class="flow-label" x="284" y="190">grid.power_w</text>
+        <text class="flow-label" x="284" y="302">franklin.power_w</text>
+      </svg>
+      <div class="canvas-sub">
+        Three vendors of telemetry land in a single HA state graph. The compute-cluster line in "Lighting" is invisible to SPAN alone &mdash; SPAN only sees the breaker total. The Delta 3 Max's pass-through reading makes it observable.
+      </div>
+    </div>
+
+    <div class="canvas">
+      <div class="canvas-title">Three cross-vendor checks the controller runs continuously</div>
+      <div class="fusion-row">
+        <div class="fusion-card">
+          <div class="fusion-title">Franklin SoC: cloud vs Modbus</div>
+          <div class="fusion-equation">
+            <div><span class="src franklin">cloud.SoC</span> <span class="op">=</span> <span class="src">85.0%</span></div>
+            <div><span class="src franklin">modbus.SoC</span> <span class="op">=</span> <span class="src">85.0%</span></div>
+            <div style="margin-top:8px"><span class="result">delta = 0.0% ✓</span></div>
+          </div>
+          <div class="fusion-note">
+            Both numbers come from the same battery via different transports. A persistent non-zero delta would mean one side is stale or wrong.
+          </div>
+        </div>
+
+        <div class="fusion-card">
+          <div class="fusion-title">Compute cluster from SPAN + EcoFlow</div>
+          <div class="fusion-equation">
+            <div><span class="src span">span.lighting</span> <span class="op">−</span> <span class="src ecoflow">d3m.pass_through</span></div>
+            <div><span class="src">1,663 W − 639 W</span></div>
+            <div style="margin-top:8px"><span class="result">lights_only = 1,024 W</span></div>
+          </div>
+          <div class="fusion-note">
+            A breakdown no single vendor can produce. Both readings independently fresh; subtraction is the new metric.
+          </div>
+        </div>
+
+        <div class="fusion-card">
+          <div class="fusion-title">D3M UPS pass-through health</div>
+          <div class="fusion-equation">
+            <div><span class="src ecoflow">d3m.ac_in</span> <span class="op">≈</span> <span class="src ecoflow">d3m.ac_out</span></div>
+            <div><span class="src">637 W ≈ 639 W</span></div>
+            <div style="margin-top:8px"><span class="result">pass-through ✓ &nbsp; net_charging=off ✓</span></div>
+          </div>
+          <div class="fusion-note">
+            Confirms cluster load is being served, battery is idle (not contributing or absorbing). If these diverged with grid import positive, safety-shed would fire.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

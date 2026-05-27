@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>article</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="article.css" />
+</head>
+<body>
+<h1 id="a-practical-home-energy-os-with-home-assistant">A Practical Home
+Energy OS with Home Assistant</h1>
+<p><em>How five vendors, two batteries, an EV, and a careful policy
+engine became one operating system for my house.</em></p>
+<figure>
+<img src="screenshots/evidence-dashboard.png"
+alt="Live evidence dashboard captured the moment the EV started charging from solar surplus" />
+<figcaption aria-hidden="true">Live evidence dashboard captured the
+moment the EV started charging from solar surplus</figcaption>
+</figure>
+<p>There is a moment when a solar installation stops feeling like a set
+of devices and starts feeling like an operating system.</p>
+<p>For me it was a quiet afternoon when the house decided to charge the
+Rivian.</p>
+<p>The battery was full enough. The grid was still exporting. The car
+was home, plugged in, and below its target state of charge. The forecast
+and the optimizer both agreed it was a good charging window. Node-RED
+waited long enough to be sure it wasn’t a passing cloud-edge artifact,
+then pressed the ChargePoint start button through an allowlisted Home
+Assistant executor. A few seconds later, SPAN showed the EV circuit come
+alive.</p>
+<p>Charge the car when the sun is out. It sounds trivial. The
+interesting part is everything the system refuses to do. It will not
+start charging the car if the FranklinWH battery is near reserve. It
+will not keep charging if the house starts importing too much from the
+grid, or if the battery begins supporting the EV. It will not call
+arbitrary Home Assistant services. It will not trust a single
+integration when SPAN’s circuit telemetry can verify the physical
+result.</p>
+<p>This is the story of that system. It is also a small argument: a
+working home energy controller cannot be built by a single vendor today,
+because the substrate it needs is multi-vendor data fusion that the
+vendors themselves have no reason to ship.</p>
+<h2 id="the-thesis-five-vendors-one-policy">The Thesis: Five Vendors,
+One Policy</h2>
+<p>The hardware in my house comes from five different companies that do
+not coordinate with each other in any meaningful way.</p>
+<ul>
+<li><strong>FranklinWH</strong> (battery, inverter, transfer switch —
+the aGate + aPower stack)</li>
+<li><strong>Enphase</strong> (microinverters, per-panel production)</li>
+<li><strong>SPAN</strong> (smart panel, circuit-level real-time
+metering)</li>
+<li><strong>EcoFlow</strong> (three Delta-series batteries used as
+critical-load UPSes and a V2L buffer)</li>
+<li><strong>EMHASS</strong> (open-source home energy management as a
+planner/optimizer)</li>
+</ul>
+<p>The actuators add two more vendors: a <strong>ChargePoint
+CPH50</strong> Level-2 charger and a <strong>Rivian R1T</strong> as the
+largest flexible load on the property.</p>
+<p>Each vendor publishes its own data through its own integration, in
+its own units, on its own cadence, with its own assumptions about what
+to do with it. Each vendor’s app and cloud can do interesting things in
+isolation. None of them, individually, can do what their combined
+telemetry makes possible.</p>
+<p>Home Assistant is the substrate that makes the combination possible.
+Not because HA is clever — it isn’t, particularly — but because HA is
+the place where five independent state graphs become one queryable state
+graph, and where a small custom controller can act on the fusion.</p>
+<p>The thesis of this writeup is straightforward: <strong>the
+interesting capabilities are emergent from the fusion, not present in
+any single product</strong>. The Reddit thread that landed in
+r/FranklinWH this week makes this concrete. A homeowner asked whether
+you could cap the FranklinWH battery at 80% while still discharging
+below it during peak hours. The current answer from FranklinWH alone is
+“no, not really” — the standby toggle that caps the SoC is too blunt for
+time-of-use arbitrage. The fusion answer is “yes, and it’s been running
+on my house for weeks.” Same hardware, completely different capability,
+because the controller knows things about solar export and grid prices
+and forecasts that no single vendor’s app can see.</p>
+<figure>
+<img src="screenshots/data-fusion-sankey.png"
+alt="Cross-vendor data fusion: three vendors land in one HA state graph, and one new metric (compute-only power) emerges from the difference" />
+<figcaption aria-hidden="true">Cross-vendor data fusion: three vendors
+land in one HA state graph, and one new metric (compute-only power)
+emerges from the difference</figcaption>
+</figure>
+<h2 id="the-hardware-is-in-service-of-an-idea">The Hardware Is In
+Service Of An Idea</h2>
+<p>The solar array is large enough that the control problem is worth
+solving. 44 Silfab 440 W panels for 19.36 kW DC, behind Enphase IQ8AC
+microinverters. It’s not one simple south-facing plane. The roof has
+five different production surfaces, and they behave differently at
+different times of day:</p>
+<table>
+<thead>
+<tr>
+<th>Array</th>
+<th>Panels</th>
+<th>DC kW</th>
+<th>Azimuth</th>
+<th>Tilt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>South 1</td>
+<td>6</td>
+<td>2.64</td>
+<td>180°</td>
+<td>21°</td>
+</tr>
+<tr>
+<td>South 2</td>
+<td>7</td>
+<td>3.08</td>
+<td>180°</td>
+<td>21°</td>
+</tr>
+<tr>
+<td>East</td>
+<td>17</td>
+<td>7.48</td>
+<td>90°</td>
+<td>21°</td>
+</tr>
+<tr>
+<td>West 1</td>
+<td>7</td>
+<td>3.08</td>
+<td>270°</td>
+<td>21°</td>
+</tr>
+<tr>
+<td>West 2</td>
+<td>7</td>
+<td>3.08</td>
+<td>270°</td>
+<td>flat</td>
+</tr>
+</tbody>
+</table>
+<p>A single forecast curve does not describe this roof well. Morning,
+noon, and afternoon behave differently — east in the morning, south at
+midday, west arrays carrying the late afternoon — and the flat west
+array has its own losses-to-glare profile. The HA forecast model is
+split into five matching solar entries, one per array, so the system can
+reason about the day as a changing shape instead of just a daily
+total.</p>
+<p>The rest of the house adds the constraints the controller has to
+respect:</p>
+<ul>
+<li>The FranklinWH battery is the largest stationary storage on the
+property, around 27 kWh nominal. It is the only device authorized to
+write to the grid-tie inverter or to draw from / push to the AC
+main.</li>
+<li>The SPAN panel measures every breaker in real time. It is the only
+source that can tell you with certainty which physical circuit is
+actually drawing power right now. If FranklinWH says “house load is 2
+kW” and SPAN says “main feed is 2.2 kW”, the 200 W discrepancy is
+something worth knowing about.</li>
+<li>The Enphase Envoy publishes per-microinverter production. It is the
+only ground truth for whether a specific array is performing or whether
+one of those 44 panels has a fault.</li>
+<li>The three EcoFlows are not interchangeable. Two — a Delta 2 Max and
+a Delta 3 Max — sit in-line as UPSes for critical computer loads and
+have to stay in pass-through at all times. The third — a Delta Pro 3 —
+is reserved as the standby buffer for Rivian V2L charging during a grid
+outage, so it sits dormant near its SoC cap.</li>
+<li>The Rivian R1T is the largest flexible load in the house, around 11
+kW at maximum charge rate. It can be driven away at any time. It is also
+the only device on the property that can act as a generator via
+V2L.</li>
+<li>EMHASS is an MIT-licensed Home Assistant add-on that runs a discrete
+optimizer every five minutes over a 24-hour, 48-slot horizon. It
+produces a desired-watts target per deferrable load. It does not actuate
+anything.</li>
+<li>Home Assistant is the entity graph and event bus. Every reading from
+every vendor becomes a state-change event with a timestamp and recorded
+history.</li>
+<li>Node-RED is the live policy engine and actuator gate. It is the only
+thing on the property allowed to send a Franklin command, an EcoFlow
+charge-rate change, or a ChargePoint start/stop.</li>
+</ul>
+<p>The division of labor matters and is intentional. Each vendor stays
+in its lane. The new behaviour is between the lanes.</p>
+<h2 id="reading-the-house-data-fusion-in-practice">Reading the House:
+Data Fusion in Practice</h2>
+<p>The non-obvious capabilities all come from triangulating two or more
+vendors’ telemetry. A few concrete examples.</p>
+<p><strong>Franklin SoC from two sources.</strong> The FranklinWH aGate
+exposes a Modbus interface as well as a cloud API. The controller
+subscribes to both. The Modbus side delivers SoC, active power, AC
+voltage and current, pack temperatures, grid connection — about 50
+distinct signals — on a faster cadence and with no round trip to a
+server in another state. The cloud side is the source of truth for
+slower-changing values and for write operations. The controller runs a
+small template sensor called
+<code>franklin_modbus_cloud_soc_delta</code> that compares the two:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Franklin Modbus vs Cloud SoC Delta&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">  state</span><span class="kw">: </span><span class="ch">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    {{ (states(&#39;sensor.franklinwh_modbus_soc&#39;) | float(0)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      - states(&#39;sensor.franklinwh_state_of_charge&#39;) | float(0)) | round(2) }}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">unit_of_measurement</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;%&quot;</span></span></code></pre></div>
+<p>A persistent delta means something is wrong on one side. A delta that
+resolves on its own means I just caught a transient. Neither vendor’s
+app shows this — there’s only one number in each — but the difference
+between two numbers is what tells you whether to trust either.</p>
+<p><strong>Cluster-only power from an EcoFlow.</strong> The SPAN panel
+has a breaker labelled “Lighting” that, for historical wiring reasons,
+carries both actual lighting fixtures and a compute cluster that sits
+behind a Delta 3 Max in UPS pass-through mode. SPAN can only see the
+breaker total. EcoFlow can only see the pass-through power on its
+specific input. Subtraction gives the lights-only number that no single
+sensor measures:</p>
+<pre><code>lights_only_watts = span_lighting_breaker_watts - d3m_total_out_power_watts</code></pre>
+<p>A snapshot this afternoon: SPAN reports 735 W, D3M reports 562 W
+passing through to the cluster, lights are using the remaining 173 W.
+Two vendors that don’t know about each other, one new metric.</p>
+<p><strong>Solar surplus that the EV controller can actually
+trust.</strong> “How much surplus solar is there right now?” sounds like
+it should be one number. It isn’t. There are at least four candidate
+numbers, each measured differently:</p>
+<ul>
+<li>Enphase’s per-array production summed across all five arrays</li>
+<li>Franklin’s reported solar production (which is a derived value, not
+a direct measurement)</li>
+<li>The negative of SPAN’s main-feed power (because export is negative
+import)</li>
+<li>EMHASS’s load forecast for the current slot subtracted from one of
+the production numbers</li>
+</ul>
+<p>If they agree, the controller proceeds. If two agree and one
+disagrees by a small amount, the controller picks the most conservative
+and notes the discrepancy. If multiple sources disagree by a lot, the
+controller refuses to allocate the surplus to a discretionary load. The
+EV will not start charging on a single source’s claim of surplus,
+because a single source can be wrong, and the cost of getting it wrong
+is unintended grid import or an unexpected Franklin discharge.</p>
+<p><strong>Storm awareness that doesn’t depend on the storm.</strong>
+The local NWS alerts, FranklinWH’s own native storm flag, and EcoFlow’s
+storm-protection status are three independent signals about the same
+expected weather event. The controller doesn’t need all three to agree
+before it switches the policy into pre-storm grid-fill mode — but it
+does require that the chosen safe-import budget come from SPAN’s
+main-feed headroom measurement rather than any vendor’s assumption.</p>
+<p>These are all small things. They add up to a controller that doesn’t
+get fooled by one bad sensor, one stale forecast, or one ambiguous cloud
+value.</p>
+<h2 id="the-policy-engine-dynamic-standby-and-the-soft-cap">The Policy
+Engine: Dynamic Standby and the Soft Cap</h2>
+<p>The Reddit thread referenced earlier was about something specific. A
+homeowner wanted to cap the FranklinWH battery at 80 % to avoid spending
+most of its life at 100 % (which is harder on lithium cells than people
+realize). FranklinWH has an undocumented standby toggle on its cloud API
+that holds the battery at the cap. The objection in the thread was
+sharp: if you turn standby on, the battery never discharges, so you lose
+your time-of-use peak shaving.</p>
+<p>The fix is dynamic standby. Rather than a single user-selected “max
+SoC” setting, the controller treats the standby toggle as one mode in a
+state machine driven by live conditions. The cascade for a normal day,
+with <code>cap = 85 %</code> and
+<code>daylight threshold = 500 W</code>, is:</p>
+<pre><code>if Franklin at cap AND real solar export is happening
+  -&gt; SOLAR_HOLD (TOU profile = standby, charge limit = 0, discharge limit = 0)
+
+elif Franklin below cap-deadband AND surplus is available
+  -&gt; SOLAR_FILL (TOU profile = solar-fill, charge limit = surplus budget)
+
+elif solar power above daylight threshold AND no usable surplus
+  -&gt; SOLAR_HOLD via daylightDeficit (don&#39;t drain battery while sun is partly here)
+
+else
+  -&gt; SELF_CONSUMPTION (TOU profile = time_of_use, limits = 20 kW / 20 kW)</code></pre>
+<p>This is the soft cap homeowners are asking for. The battery holds at
+85 % whenever there is real solar export to support that hold —
+<em>exactly when the hold is earning its keep</em>. The moment surplus
+disappears and solar drops below the daylight threshold, the controller
+releases standby and the battery is fully available to cover the evening
+load and TOU peak hours, exactly as it would be without any cap at
+all.</p>
+<p>Two additional branches cover edge cases:</p>
+<ul>
+<li><strong>Storm pre-fill.</strong> When NWS alerts or HA stormwatch
+fire, the policy switches from <code>NORMAL_NET_METERING</code> to
+<code>PRE_STORM_GRID_FILL</code>. The controller charges Franklin from
+the grid up to a SPAN-derived safe-import headroom (because pushing
+storm pre-fill through your main breaker is exactly the wrong time to
+find out your service is undersized).</li>
+<li><strong>Grid-preferred load active.</strong> When the A/C or another
+heavy intermittent load is running, the controller engages a discharge
+cap on Franklin so the heavy load draws from the grid rather than
+accelerating Franklin’s reserve drawdown.</li>
+</ul>
+<p>The state machine is implemented as a 500-line pure-JavaScript module
+with no Home Assistant or Node-RED imports, which means it’s testable in
+isolation. The current test suite has 144 cases covering: every state
+transition, every safety condition, every device-level shed and start
+scenario, every storm/calibration/outage override. The same module is
+what Node-RED imports at runtime to make every decision.</p>
+<figure>
+<img src="screenshots/state-machine-policy-engine.png"
+alt="Policy engine state machine: Franklin policy modes plus Rivian and EcoFlow advisory lanes, with transition triggers labelled" />
+<figcaption aria-hidden="true">Policy engine state machine: Franklin
+policy modes plus Rivian and EcoFlow advisory lanes, with transition
+triggers labelled</figcaption>
+</figure>
+<h2 id="a-bug-a-fix-and-the-drift-sentinel">A Bug, a Fix, and the Drift
+Sentinel</h2>
+<p>Earlier this week the deployed system started failing in a specific
+way. The EcoFlow safety-shed logic, which I’ll describe in a moment, was
+firing about every 30 seconds with the status <code>failed</code>. Over
+24 hours, 335 of these failed events accumulated. Zero successes.</p>
+<p>The safety-shed is the controller’s defensive backstop for the
+EcoFlows. If a device is actively pulling AC power to charge itself,
+<em>and</em> the house is importing from the grid, <em>and</em> the
+Franklin can’t help, the controller has to assume that EcoFlow is now
+charging itself from the grid (or worse, from the Franklin’s reserve).
+The shed command instructs that EcoFlow to stop charging without
+disabling its AC output to the loads it’s protecting.</p>
+<p>The bug, when I traced it: the shed command was writing
+<code>value = 0</code> to the EcoFlow’s AC charging-power slider in Home
+Assistant. Each of those sliders has a non-zero minimum — 200 W for
+Delta Pro 3 and Delta 2 Max, 50 W for Delta 3 Max — so HA was returning
+HTTP 500 on every attempt. The executor caught the exception, recorded
+it as <code>failed</code>, and tried again 30 seconds later. The
+cooldown that was supposed to suppress retries used a signature that
+included the current grid-import wattage in the reason text, so the
+signature was different on each cycle and the cooldown never
+engaged.</p>
+<p>The fix was small. Pin the EcoFlow’s <code>target_soc</code> to the
+device’s current SoC (so the device thinks it’s at target and stops
+charging through its own logic), and clamp the charging power to the
+device’s minimum rather than zero. The cooldown signature was changed to
+a stable shape of <code>{id, device, intent}</code> per command,
+stripped of all volatile telemetry. A contract test was added to enforce
+that the shed handler never writes <code>0</code> again.</p>
+<p>The whole episode is in the project’s implementation plan with the
+specific commit hashes, the SPAN/EcoFlow recordings that caught it, and
+the synthetic shed test that proved the fix. None of that is
+interesting. The interesting part is the meta-lesson.</p>
+<figure>
+<img src="screenshots/churn-reduction-chart.png"
+alt="Hour-by-hour command churn collapses after the retune-fix deploy at 10:33 PDT — 97% reduction in write-gate toggles, 98% in target-change events" />
+<figcaption aria-hidden="true">Hour-by-hour command churn collapses
+after the retune-fix deploy at 10:33 PDT — 97% reduction in write-gate
+toggles, 98% in target-change events</figcaption>
+</figure>
+<p>I built a small service called the <strong>drift sentinel</strong>
+that runs every five minutes on the HA host, independent of Node-RED. It
+does two things. First, it checks that the policy engine binary deployed
+on the host matches the policy engine binary in the repository and
+matches the version embedded in the Node-RED flow’s bundled execution
+context. If any of the three checksums disagree, the sentinel raises an
+alert. Second, it re-runs the policy engine against the current HA state
+and compares the result to whatever Node-RED most recently published. If
+the live controller disagrees with what the latest policy would say, the
+sentinel raises an alert.</p>
+<p>The sentinel is the thing that would have caught the shed bug in the
+first hour instead of the first day. It is also the thing that proves,
+hour after hour, that the deployed system continues to match the source
+of truth — that nothing has been edited live, that no drift has
+accumulated, that the controller still does what its code says.</p>
+<p>The sentinel is the closest thing this system has to a “test in
+production.” It’s the same idea as a synthetic monitor for a web
+service: you run a small, regular, externally-verifiable check that the
+thing under test is in a known good state. For a home energy controller,
+that’s the difference between a system that works on the day you wrote
+it and a system that keeps working on the day you forgot you wrote
+it.</p>
+<figure>
+<img src="screenshots/drift-sentinel-card.png"
+alt="Drift sentinel reporting aligned: three independent checksums agree, behavioral re-execution matches what Node-RED published, no writes from the sentinel itself" />
+<figcaption aria-hidden="true">Drift sentinel reporting aligned: three
+independent checksums agree, behavioral re-execution matches what
+Node-RED published, no writes from the sentinel itself</figcaption>
+</figure>
+<h2 id="refusing-to-do-things">Refusing to Do Things</h2>
+<p>The most important behaviours of this controller are the ones that
+produce no commands at all.</p>
+<p>In a typical 24-hour cycle the system emits two or three Franklin
+command bursts and zero EcoFlow or ChargePoint commands. That is not
+because nothing is happening. It’s because the controller is busy
+refusing to do almost everything it considers.</p>
+<p>Some of the refusals are explicit:</p>
+<ul>
+<li>The EcoFlows’ AC output cannot be disabled by any controller action,
+because two of them are UPSes for critical computer loads. There is a
+contract test that fails the build if anyone adds a
+<code>switch.delta_*_ac_enabled</code> write to the executor.</li>
+<li>The Delta Pro 3 is the Rivian-V2L buffer and is not allowed to be
+opportunistically charged by the normal energy manager. Charging it
+requires an explicit “v2l_bridge_topup” or “calibration_topup” intent
+that the policy engine has to emit on purpose.</li>
+<li>The Rivian’s vehicle-side charge limit can never be set by the
+controller. The policy can recommend it. The dashboard can notify the
+user. The controller will not call any HA service that touches the
+Rivian directly. If a storm comes through and the EV needs to be at 100
+%, the user does that themselves.</li>
+<li>Live write actions on Franklin require both a “live enabled” boolean
+to be on <em>and</em> a write-allowed gate per command to be set by the
+safety logic. Either gate being off means no command is sent, regardless
+of what the policy thinks should happen.</li>
+</ul>
+<p>Some of the refusals are temporal:</p>
+<ul>
+<li>After any Franklin command, a 15-minute same-action dwell prevents
+the controller from chasing small changes. A solar surplus that drops
+from 2,000 W to 1,500 W is not worth sending Franklin a new charge-limit
+command for. A drop from 2,000 W to 0 W is.</li>
+<li>After any successful executor write, a per-physical-signature
+cooldown prevents the same command from being re-sent. The 30-minute
+EcoFlow cooldown is what kept the safety-shed loop from melting down the
+integration before the bug fix landed.</li>
+</ul>
+<p>Some of the refusals come from cross-source disagreement:</p>
+<ul>
+<li>Solar surplus has to be visible in at least two of {Enphase
+production, negative SPAN main-feed power, Franklin’s reported export}
+before the EV is allowed to begin charging. If only one source claims
+surplus, the others probably know something the first one doesn’t.</li>
+<li>Storm mode is engaged on the <em>union</em> of NWS alerts,
+FranklinWH native storm flag, and HA stormwatch, but the storm-fill
+budget itself is gated on a <em>separate</em> SPAN-derived safe-import
+headroom. The signals can disagree about whether a storm is coming; they
+cannot disagree about how much current the service drop can carry.</li>
+</ul>
+<p>The point of all these refusals is that doing nothing is the default.
+Acting requires evidence. Acting <em>automatically</em>, against
+actuators that touch hardware, requires either redundant evidence or
+explicit human override.</p>
+<p>This is the part the FranklinWH product team is going to have the
+hardest time reproducing inside their own app, by the way. A safe home
+energy controller doesn’t look like a feature list. It looks like a long
+list of conditions under which the feature deliberately does not
+run.</p>
+<h2 id="what-i-would-build-next">What I Would Build Next</h2>
+<p>The version of the system described here works. It has been live for
+several days under real conditions, it has caught one real bug and
+recovered from it cleanly, and the drift sentinel has stayed aligned
+across multiple code deploys. The road from here is not particularly
+long.</p>
+<p>Three pieces are queued in my project tracker as backlog items:</p>
+<ul>
+<li><strong>A 15-minute EMHASS optimizer step.</strong> Today EMHASS
+plans in 30-minute slots, which is fine for the Rivian’s three-hour
+median session but loses some accuracy for the EcoFlows. Halving the
+slot length should give better surplus matching at the cost of more
+optimizer iterations.</li>
+<li><strong>A first-class Rivian V2L bridge mode.</strong> Today the
+system has a <code>standby_bridge</code> device role baked into the
+EcoFlow executor, but the path from “Rivian plugged into Delta Pro 3
+during a grid outage” to “Delta Pro 3 is allowed to AC-charge despite
+gridConnected = false” is still partially manual. The acceptance
+criteria are written; the implementation will land before the next storm
+season.</li>
+<li><strong>The compute cluster as a load-forecast feature.</strong>
+EMHASS’s load forecast is currently a one-dimensional curve. The Delta 3
+Max pass-through power is a cluster-only meter that has its own daily
+and weekly pattern (GPU jobs, builds, idle nights). Promoting it into a
+separate forecast feature should give the optimizer better predictions
+about evening surplus availability.</li>
+</ul>
+<p>Three larger questions remain, and I’d actively welcome
+correspondence about them.</p>
+<p>The first is <strong>policy under explicit time-of-use
+rates</strong>, not net metering. Today my policy assumes export is
+always valid and grid is a seasonal battery. If my utility migrates me
+to a true TOU rate plan with peak / off-peak / super-off-peak buckets,
+the policy needs to learn explicit peak avoidance and off-peak charging.
+The architecture supports it; the policy doesn’t have the branches
+yet.</p>
+<p>The second is <strong>HVAC as a deferrable load.</strong> EMHASS can
+model thermal loads, but the comfort / equipment-protection / occupancy
+constraints make it a much riskier addition than EV or battery charging.
+I have a feasibility ticket open and explicitly deferred until the rest
+of the system has accumulated more soak time.</p>
+<p>The third is the harder one: <strong>what happens when the vendors
+actually do start shipping the integrated features they should have
+shipped?</strong> If FranklinWH adds a soft cap with TOU release in v2.x
+of the aGate firmware, do I retire my dynamic standby logic and just use
+theirs? Probably yes — most of the value of running the controller comes
+from work the vendors don’t do, not work they could do. The data fusion
+across all five remains a thing only HA can do. The day Franklin solves
+the soft-cap problem natively is the day I delete fifty lines of
+state-machine code and keep the other thousand.</p>
+<h2 id="an-operating-system-for-a-house">An Operating System For A
+House</h2>
+<p>There is a moment when a solar installation stops feeling like a set
+of devices and starts feeling like an operating system.</p>
+<p>The transition isn’t dramatic and there isn’t a specific switch you
+flip. It happens when you stop reading vendor dashboards and start
+reading the fusion view; when “what is the house doing right now”
+becomes a single question with a single answer instead of five different
+vendor apps to consult; when “should we charge the car?” becomes a
+function call against a controller rather than a manual decision.</p>
+<p>It happens when refusing to do something becomes the default and
+acting becomes the exception. When five vendors’ state graphs collapse
+into one policy and one history. When a contract test gates the next
+deploy and a drift sentinel gates the live system. When the most boring
+possible outcome — four hours of steady state on a sunny afternoon with
+the battery at cap and no commands flowing — is recognized as the point
+of the work, not the absence of it.</p>
+<figure>
+<img src="screenshots/live-dashboard.png"
+alt="The deployed live dashboard during a steady-state afternoon: Franklin at cap in SOLAR_HOLD, EV at target, EcoFlows waiting for an EMHASS slot, live gate suppressed because Franklin readback is already aligned — exactly what nothing-to-do looks like in production" />
+<figcaption aria-hidden="true">The deployed live dashboard during a
+steady-state afternoon: Franklin at cap in SOLAR_HOLD, EV at target,
+EcoFlows waiting for an EMHASS slot, live gate suppressed because
+Franklin readback is already aligned — exactly what nothing-to-do looks
+like in production</figcaption>
+</figure>
+<p>The Reddit thread that pushed me to write this up asked a small
+question: can you cap the battery at 80 % but still discharge during
+peak hours? The answer involves a 1,000-line policy engine, a drift
+sentinel, a multi-vendor data fusion, and three EcoFlows that nobody
+asked about. That isn’t the right answer for everyone. For some homes
+it’s wildly more than is needed. For mine, after the third storm season
+and the second EV and the compute cluster on a shared breaker, it turned
+out to be exactly enough.</p>
+<p>If you have a similar enough setup that any of this resonates, the
+implementation is in Home Assistant + Node-RED + a small JavaScript
+policy engine + about a dozen Python helpers, with EMHASS as the
+optimizer. None of it is proprietary. Most of it is small. The
+interesting parts are the boundaries between vendors, not the code
+inside any one vendor’s lane.</p>
+<p>Happy to compare notes.</p>
+<hr />
+<p><em>The system in this writeup runs on a residential install in the
+Pacific Northwest. All the integrations are off-the-shelf Home Assistant
+components except the policy engine and the safety logic, which are this
+project’s own code. The drift sentinel runs as a systemd timer service
+on the HA host. The full ticket trail and architectural decisions are
+tracked in a private Plane workspace; happy to share specific commit
+references on request.</em></p>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Drift Sentinel - Aligned Baseline</title>
+  <style>
+    :root {
+      --bg: #101712;
+      --paper: #f8f0df;
+      --ink: #f8f0df;
+      --muted: #b8c2b0;
+      --line: rgba(248, 240, 223, 0.18);
+      --safe: #8fc9a3;
+      --normal: #f4c76d;
+      --override: #ef9a76;
+      --warn: #e07a54;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(143,201,163,0.10), transparent 32rem), linear-gradient(135deg, #0c130f, var(--bg));
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 48px;
+      min-height: 100vh;
+    }
+    .shell { max-width: 1000px; margin: 0 auto; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(23,32,25,0.88);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.32);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      background: linear-gradient(180deg, rgba(143,201,163,0.06), transparent);
+    }
+    .card-header .title { display: flex; align-items: center; gap: 14px; }
+    .status-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 14px rgba(143,201,163,0.6);
+    }
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .entity {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .state-pill {
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(143,201,163,0.18);
+      border: 1px solid rgba(143,201,163,0.4);
+      color: var(--safe);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .section { padding: 22px 28px; border-bottom: 1px solid var(--line); }
+    .section:nth-child(2n) { border-left: 1px solid var(--line); }
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(248,240,223,0.06);
+      gap: 16px;
+    }
+    .row:last-child { border-bottom: none; }
+    .row .k { color: var(--muted); font-size: 13px; }
+    .row .v { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .sha { color: var(--paper); }
+    .ok { color: var(--safe); font-weight: 700; }
+
+    .checksums {
+      padding: 24px 28px 28px;
+      background: rgba(14,22,17,0.55);
+    }
+    .checksum-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 80px;
+      gap: 16px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: rgba(248,240,223,0.03);
+      border: 1px solid var(--line);
+    }
+    .checksum-row .source { font-size: 13px; color: var(--ink); }
+    .checksum-row .source-meta { font-size: 11px; color: var(--muted); }
+    .checksum-row .hash {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--paper);
+      letter-spacing: 0.01em;
+    }
+    .checksum-row .check {
+      text-align: right;
+      color: var(--safe);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .match-banner {
+      margin-top: 14px;
+      padding: 14px 18px;
+      background: rgba(143,201,163,0.10);
+      border: 1px solid rgba(143,201,163,0.4);
+      border-radius: 12px;
+      color: var(--safe);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer {
+      padding: 18px 28px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid var(--line);
+    }
+    code { color: var(--paper); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="card">
+      <div class="card-header">
+        <div class="title">
+          <div class="status-dot"></div>
+          <div>
+            <h1>Drift Sentinel — Aligned</h1>
+            <div class="entity">sensor.energy_manager_policy_drift &middot; 2026-05-25 13:46:04 PDT</div>
+          </div>
+        </div>
+        <div class="state-pill">aligned</div>
+      </div>
+
+      <div class="grid">
+        <div class="section">
+          <div class="section-title">Static drift check</div>
+          <div class="row"><span class="k">Source SHA-256</span><span class="v ok">✓</span></div>
+          <div class="row"><span class="k">Flow embedded SHA-256</span><span class="v ok">✓</span></div>
+          <div class="row"><span class="k">Live sensor policy_checksum</span><span class="v ok">✓</span></div>
+          <div class="row"><span class="k">Flow policy version match</span><span class="v ok">✓</span></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Behavioral drift check</div>
+          <div class="row"><span class="k">Mode</span><span class="v sha">SOLAR_HOLD</span></div>
+          <div class="row"><span class="k">Expected vs actual state</span><span class="v ok">match</span></div>
+          <div class="row"><span class="k">Target charge W</span><span class="v sha">0 ≡ 0</span></div>
+          <div class="row"><span class="k">Target discharge W</span><span class="v sha">0 ≡ 0</span></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Run state</div>
+          <div class="row"><span class="k">Last run</span><span class="v sha">2026-05-25T20:46:04Z</span></div>
+          <div class="row"><span class="k">Last drift</span><span class="v sha">2026-05-25T20:45:16Z (test)</span></div>
+          <div class="row"><span class="k">Consecutive drifts</span><span class="v sha">0</span></div>
+          <div class="row"><span class="k">Next run</span><span class="v sha">in 4m via systemd timer</span></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Boundary</div>
+          <div class="row"><span class="k">Live writes from sentinel</span><span class="v ok">none</span></div>
+          <div class="row"><span class="k">.storage mutation</span><span class="v ok">none</span></div>
+          <div class="row"><span class="k">Recorder mutation</span><span class="v ok">none</span></div>
+          <div class="row"><span class="k">Token reuse</span><span class="v sha">advisory_ha_token, read-only paths</span></div>
+        </div>
+      </div>
+
+      <div class="checksums">
+        <div class="section-title" style="margin-bottom:14px">Three checksums must agree</div>
+        <div class="checksum-row">
+          <div>
+            <div class="source">Canonical source on host</div>
+            <div class="source-meta">/var/lib/hass/scripts/energy_policy_engine.js</div>
+          </div>
+          <div class="hash">df51571b5a2cf2d5ad7de0889ec6d68ed3cd7d72e9670cc6ef86a4098b558db2</div>
+          <div class="check">✓</div>
+        </div>
+        <div class="checksum-row">
+          <div>
+            <div class="source">Embedded in flow JSON</div>
+            <div class="source-meta">POLICY_ENGINE_SHA256 in /var/lib/node-red/data/flows.json</div>
+          </div>
+          <div class="hash">df51571b5a2cf2d5ad7de0889ec6d68ed3cd7d72e9670cc6ef86a4098b558db2</div>
+          <div class="check">✓</div>
+        </div>
+        <div class="checksum-row">
+          <div>
+            <div class="source">Live HA sensor attribute</div>
+            <div class="source-meta">sensor.franklin_nodered_advisory_state.policy_checksum</div>
+          </div>
+          <div class="hash">df51571b5a2cf2d5ad7de0889ec6d68ed3cd7d72e9670cc6ef86a4098b558db2</div>
+          <div class="check">✓</div>
+        </div>
+        <div class="match-banner">
+          <div style="font-size:18px">✓</div>
+          <div>All three checksums match. Tamper test earlier today: changed one byte in the canonical source — sentinel transitioned to <code>drifted_static</code> in under 5 minutes and raised a persistent notification. Restored source, next run returned to <code>aligned</code>, notification auto-dismissed.</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>policy-drift-sentinel.timer &middot; OnCalendar=*-*-* *:0/5:00 &middot; oneshot service, runs as node-red user</div>
+        <div>SOLAR-36</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

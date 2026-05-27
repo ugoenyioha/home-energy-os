@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Energy OS — Writing</title>
+  <link rel="stylesheet" href="article.css">
+  <style>
+    body { max-width: 720px; margin: 4em auto; padding: 0 1.5em; }
+    .post-list { list-style: none; padding: 0; margin: 3em 0; }
+    .post-list li { margin-bottom: 2.5em; padding-bottom: 2em; border-bottom: 1px solid #e6e1d6; }
+    .post-list li:last-child { border-bottom: none; }
+    .post-list h2 { font-size: 1.5em; margin-bottom: 0.25em; }
+    .post-list h2 a { text-decoration: none; }
+    .post-list h2 a:hover { text-decoration: underline; }
+    .post-meta { color: #8c8579; font-size: 0.9em; margin-bottom: 0.75em; }
+    .post-summary { color: #4a4538; line-height: 1.55; }
+    .site-intro { color: #4a4538; line-height: 1.6; }
+    .site-footer { margin-top: 5em; padding-top: 2em; border-top: 1px solid #e6e1d6; color: #8c8579; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+
+<h1>Home Energy OS</h1>
+
+<p class="site-intro">
+  Writing about a multi-vendor home energy controller built on Home Assistant, Node-RED,
+  a small policy engine, and a drift sentinel. Production install on a residential property
+  in the Pacific Northwest.
+</p>
+
+<ul class="post-list">
+  <li>
+    <h2><a href="article.html">A Practical Home Energy OS with Home Assistant</a></h2>
+    <p class="post-meta">May 2026 · ~4,250 words</p>
+    <p class="post-summary">
+      How a FranklinWH whole-home battery, an Enphase solar array, a SPAN panel, three EcoFlow
+      backup batteries, and a Rivian R1T became one coherent controller. Covers data fusion
+      across five vendors, the policy engine that decides what to do with the result, the drift
+      sentinel that catches when the engine and reality disagree, and the unglamorous discipline
+      of refusing to do things.
+    </p>
+  </li>
+  <li>
+    <h2><a href="article-2.html">When the Gateway Goes Dark: A First Outage Postmortem</a></h2>
+    <p class="post-meta">May 2026 · ~2,100 words · follow-up to the above</p>
+    <p class="post-summary">
+      A real power outage tested the controller for the first time and found something the
+      original design didn't account for: the resilience of the resilience system itself.
+      The gateway lost power, came back amnesiac, misclassified the cap edge, and quietly
+      imported electricity from the grid to overcharge the home battery. What the drift
+      sentinel got right, what it couldn't do, and what got shipped in response.
+    </p>
+  </li>
+</ul>
+
+<p class="site-footer">
+  Source for the writeups (and the controller itself) lives on GitHub.
+  Comparing notes welcome — contact via GitHub issues on the repo.
+</p>
+
+</body>
+</html>

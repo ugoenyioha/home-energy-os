@@ -1,0 +1,586 @@
+{
+  "array": {
+    "microinverters": "Enphase IQ8AC",
+    "panel_watts": 440,
+    "panels": 44,
+    "planes": [
+      {
+        "azimuth": 180,
+        "name": "South 1",
+        "panels": 6,
+        "tilt": 21,
+        "watts": 2640
+      },
+      {
+        "azimuth": 180,
+        "name": "South 2",
+        "panels": 7,
+        "tilt": 21,
+        "watts": 3080
+      },
+      {
+        "azimuth": 90,
+        "name": "East",
+        "panels": 17,
+        "tilt": 21,
+        "watts": 7480
+      },
+      {
+        "azimuth": 270,
+        "name": "West 1",
+        "panels": 7,
+        "tilt": 21,
+        "watts": 3080
+      },
+      {
+        "azimuth": 270,
+        "name": "West 2",
+        "panels": 7,
+        "tilt": 0,
+        "watts": 3080
+      }
+    ],
+    "total_watts": 19360
+  },
+  "article_title": "A Practical Home Energy OS with Home Assistant",
+  "captured_at": "2026-05-22T20:19:13.443010+00:00",
+  "facts": {
+    "ecoflow": {
+      "devices": [
+        {
+          "ac_charge_power_w": 800.0,
+          "calibration_active": false,
+          "emhass_w": 0.0,
+          "key": "delta_pro_3",
+          "name": "Delta Pro 3",
+          "soc": 87.68153,
+          "status": "online",
+          "target_soc": 90.0
+        },
+        {
+          "ac_charge_power_w": 700.0,
+          "calibration_active": false,
+          "emhass_w": 0.0,
+          "key": "delta_2_max",
+          "name": "Delta 2 Max",
+          "soc": 70.0,
+          "status": "online",
+          "target_soc": 90.0
+        },
+        {
+          "ac_charge_power_w": 500.0,
+          "calibration_active": false,
+          "emhass_w": 0.0,
+          "key": "delta_3_max",
+          "name": "Delta 3 Max",
+          "soc": 67.0,
+          "status": "online",
+          "target_soc": 90.0
+        }
+      ],
+      "emhass_total_w": 0.0
+    },
+    "emhass_plan": {
+      "available": true,
+      "batt_forecast_w": 0.0,
+      "ecoflow_delta_2_max_forecast_w": 0.0,
+      "ecoflow_delta_3_max_forecast_w": 0.0,
+      "ecoflow_delta_pro_3_forecast_w": 0.0,
+      "ev_forecast_w": 11500.0,
+      "load_forecast_w": 1521.2,
+      "optim_status": "Optimal",
+      "pv_forecast_w": 13840.0,
+      "soc_forecast_pct": 85.0
+    },
+    "entity_errors": {},
+    "ev": {
+      "capacity_kwh": 142.884995,
+      "charging": true,
+      "cph50_amperage_limit": "48",
+      "cph50_cable": "Plugged In",
+      "cph50_charger_state": "In Use",
+      "cph50_energy_kwh": 4.57,
+      "cph50_power_kw": 11.28,
+      "cph50_schedule_active_now": false,
+      "cph50_schedule_enabled": true,
+      "cph50_schedule_locked": true,
+      "cph50_schedule_window_end": "17:00:00",
+      "cph50_schedule_window_start": "16:59:00",
+      "cph50_status": "Charging",
+      "emhass_ev_w": 11500.0,
+      "emhass_says_charge": true,
+      "energy_needed_kwh": 23.0,
+      "home": true,
+      "location": "home",
+      "net_credit_kwh": 0.0,
+      "plugged": true,
+      "range_mi": 188.275471247912,
+      "soc": 53.900002,
+      "soc_delta": 16.099998,
+      "span_cph50_power_w": 4771.0,
+      "target_soc": 70.0
+    },
+    "inputs": {
+      "backup_max_soc": 100,
+      "battery_charge_w": 42,
+      "battery_discharge_w": 0,
+      "battery_kw": -0.042,
+      "battery_w": -42,
+      "cap_soc": 85.0,
+      "charge_cap_watts": 0,
+      "charge_limit": 0,
+      "cloud_soc": 85.316,
+      "discharge_cap_watts": 0,
+      "discharge_limit": 0,
+      "ecoflow_native_storm": false,
+      "ecoflow_storm_protection_active": false,
+      "grid_connected": true,
+      "grid_export_w": 1644,
+      "grid_import_w": 0,
+      "grid_kw": -1.644,
+      "grid_preferred_load_active": true,
+      "grid_w": -1644,
+      "ha_stormwatch": false,
+      "home_load_kw": 12.696,
+      "live_enabled_requested": true,
+      "mode": "time_of_use",
+      "monthly_calibration": false,
+      "native_storm": false,
+      "normal_watts": 20000,
+      "nws_alerts": 0,
+      "previous_cycle_phase": null,
+      "reserve_soc": 70.0,
+      "restore_soc": 60.0,
+      "self_min_soc": 70,
+      "soc": 85.0,
+      "soft_cap_enabled": true,
+      "solar_hold_resume_soc": 83.0,
+      "solar_kw": 14.378,
+      "solar_surplus_kw": 1.6820000000000004,
+      "tou_dispatch_current_profile": "standby",
+      "tou_dispatch_error": null,
+      "tou_dispatch_issues": [],
+      "tou_dispatch_solar_fill_healthy": false,
+      "tou_dispatch_standby_healthy": true,
+      "tou_min_soc": 70,
+      "upper_trigger_soc": 85.0
+    },
+    "normal_watts": 20000,
+    "observed": {
+      "apowerChPw": 0,
+      "apowerDishPw": 0,
+      "backupMaxSoc": 100,
+      "battery_w": -56,
+      "grid_connected": true,
+      "grid_w": -1630,
+      "home_load_w": 12700,
+      "mode": "time_of_use",
+      "modeChoose": 14,
+      "runingMode": 52975,
+      "selfMinSoc": 70,
+      "soc_percent": 85.0,
+      "solar_w": 14386,
+      "stormHedgeActive": false,
+      "stormHedgeEnabled": true,
+      "timestamp": "2026-05-22T13:14:38-0700",
+      "touMinSoc": 70,
+      "tou_dispatch_current_profile": "standby",
+      "tou_dispatch_issues": [],
+      "tou_dispatch_solar_fill_healthy": false,
+      "tou_dispatch_standby_healthy": true
+    },
+    "reason": "facts built from HA sensors; Franklin state manager not called",
+    "source": "node_red_live_ha_states",
+    "state": "nodered_facts",
+    "timestamp": "2026-05-22T20:19:13.443010+00:00"
+  },
+  "research_notes": [
+    "Home Assistant positions Energy as a unified view of grid, solar, batteries, and devices.",
+    "EMHASS optimizes home energy with forecasts, linear programming, and deferrable loads.",
+    "Community solar-EV examples emphasize surplus calculation, smoothing/dwell, battery protection, and explicit auto/manual switches."
+  ],
+  "states": {
+    "binary_sensor.christine_charger_connection": {
+      "attributes": {},
+      "friendly_name": "Christine Charger Connection",
+      "last_updated": "2026-05-22T19:54:10.754424+00:00",
+      "state": "on",
+      "unit": null
+    },
+    "binary_sensor.christine_charging_status": {
+      "attributes": {},
+      "friendly_name": "Christine Charging Status",
+      "last_updated": "2026-05-22T19:54:10.753997+00:00",
+      "state": "on",
+      "unit": null
+    },
+    "binary_sensor.franklin_nodered_write_allowed": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.626071+00:00",
+      "state": "off",
+      "unit": null
+    },
+    "sensor.charge_point_ev_charger_power": {
+      "attributes": {},
+      "friendly_name": "Charge Point EV charger Power",
+      "last_updated": "2026-05-22T20:19:12.566710+00:00",
+      "state": "4771.0",
+      "unit": "W"
+    },
+    "sensor.christine_battery_state_of_charge": {
+      "attributes": {},
+      "friendly_name": "Christine Battery State of Charge",
+      "last_updated": "2026-05-22T20:19:11.775012+00:00",
+      "state": "53.900002",
+      "unit": "%"
+    },
+    "sensor.christine_charging_range_added": {
+      "attributes": {},
+      "friendly_name": "Christine Charging Range Added",
+      "last_updated": "2026-05-22T15:39:46.370482+00:00",
+      "state": "unknown",
+      "unit": "mi"
+    },
+    "sensor.christine_charging_speed": {
+      "attributes": {},
+      "friendly_name": "Christine Charging Speed",
+      "last_updated": "2026-05-22T15:39:46.371392+00:00",
+      "state": "unknown",
+      "unit": "kW"
+    },
+    "sensor.christine_charging_time_remaining": {
+      "attributes": {},
+      "friendly_name": "Christine Charging Time Remaining",
+      "last_updated": "2026-05-22T20:19:11.776719+00:00",
+      "state": "124",
+      "unit": "min"
+    },
+    "sensor.christine_estimated_vehicle_range": {
+      "attributes": {},
+      "friendly_name": "Christine Estimated Vehicle Range",
+      "last_updated": "2026-05-22T20:19:11.775775+00:00",
+      "state": "188.275471247912",
+      "unit": "mi"
+    },
+    "sensor.cph50_charger_state": {
+      "attributes": {},
+      "friendly_name": "CPH50 Charger State",
+      "last_updated": "2026-05-22T19:54:27.787836+00:00",
+      "state": "In Use",
+      "unit": null
+    },
+    "sensor.cph50_charging_cable": {
+      "attributes": {},
+      "friendly_name": "CPH50 Charging Cable",
+      "last_updated": "2026-05-22T15:39:33.615864+00:00",
+      "state": "Plugged In",
+      "unit": null
+    },
+    "sensor.cph50_charging_status": {
+      "attributes": {},
+      "friendly_name": "CPH50 Charging Status",
+      "last_updated": "2026-05-22T19:54:27.787640+00:00",
+      "state": "Charging",
+      "unit": null
+    },
+    "sensor.cph50_energy_output": {
+      "attributes": {},
+      "friendly_name": "CPH50 Energy Output",
+      "last_updated": "2026-05-22T20:19:07.516540+00:00",
+      "state": "4.57",
+      "unit": "kWh"
+    },
+    "sensor.cph50_power_output": {
+      "attributes": {},
+      "friendly_name": "CPH50 Power Output",
+      "last_updated": "2026-05-22T20:16:06.680202+00:00",
+      "state": "11.28",
+      "unit": "kW"
+    },
+    "sensor.delta_2_max_battery_level": {
+      "attributes": {},
+      "friendly_name": "Delta 2 Max Battery Level",
+      "last_updated": "2026-05-22T19:35:15.495477+00:00",
+      "state": "70",
+      "unit": "%"
+    },
+    "sensor.delta_3_max_battery_level": {
+      "attributes": {},
+      "friendly_name": "Delta 3 Max Battery Level",
+      "last_updated": "2026-05-22T19:17:18.309725+00:00",
+      "state": "67.0",
+      "unit": "%"
+    },
+    "sensor.delta_pro_3_battery_level_3": {
+      "attributes": {},
+      "friendly_name": "Delta Pro 3 Battery Level",
+      "last_updated": "2026-05-22T20:18:09.354142+00:00",
+      "state": "87.68153",
+      "unit": "%"
+    },
+    "sensor.energy_production_today_remaining_2": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - remaining today",
+      "last_updated": "2026-05-22T19:39:32.006101+00:00",
+      "state": "7.541",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_today_remaining_3": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - remaining today",
+      "last_updated": "2026-05-22T19:39:34.583388+00:00",
+      "state": "15.125",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_today_remaining_4": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - remaining today",
+      "last_updated": "2026-05-22T19:39:35.543451+00:00",
+      "state": "7.955",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_today_remaining_5": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - remaining today",
+      "last_updated": "2026-05-22T19:39:33.583749+00:00",
+      "state": "6.819",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_today_remaining_6": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - remaining today",
+      "last_updated": "2026-05-22T19:39:36.285311+00:00",
+      "state": "8.254",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_tomorrow_2": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - tomorrow",
+      "last_updated": "2026-05-22T18:39:31.960368+00:00",
+      "state": "7.201",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_tomorrow_3": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - tomorrow",
+      "last_updated": "2026-05-22T19:39:34.583707+00:00",
+      "state": "17.52",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_tomorrow_4": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - tomorrow",
+      "last_updated": "2026-05-22T19:39:35.543845+00:00",
+      "state": "7.101",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_tomorrow_5": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - tomorrow",
+      "last_updated": "2026-05-22T19:39:33.584059+00:00",
+      "state": "6.088",
+      "unit": "kWh"
+    },
+    "sensor.energy_production_tomorrow_6": {
+      "attributes": {},
+      "friendly_name": "Solar production forecast Estimated energy production - tomorrow",
+      "last_updated": "2026-05-22T19:39:36.285637+00:00",
+      "state": "6.872",
+      "unit": "kWh"
+    },
+    "sensor.franklin_display_grid_use": {
+      "attributes": {},
+      "friendly_name": "Franklin Display Grid Use",
+      "last_updated": "2026-05-22T20:19:09.463006+00:00",
+      "state": "-1.644",
+      "unit": "kW"
+    },
+    "sensor.franklin_display_home_load": {
+      "attributes": {},
+      "friendly_name": "Franklin Display Home Load",
+      "last_updated": "2026-05-22T20:19:09.460580+00:00",
+      "state": "12.696",
+      "unit": "kW"
+    },
+    "sensor.franklin_display_solar_production": {
+      "attributes": {},
+      "friendly_name": "Franklin Display Solar Production",
+      "last_updated": "2026-05-22T20:15:41.361870+00:00",
+      "state": "14.49",
+      "unit": "kW"
+    },
+    "sensor.franklin_nodered_advisory_state": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.618519+00:00",
+      "state": "GRID_PREFERRED_STANDBY",
+      "unit": null
+    },
+    "sensor.franklin_nodered_desired_action": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.620079+00:00",
+      "state": "set_grid_preferred_standby",
+      "unit": null
+    },
+    "sensor.franklin_nodered_emhass_plan": {
+      "attributes": {
+        "available": true,
+        "batt_forecast_w": 0,
+        "desired_action": "set_grid_preferred_standby",
+        "ev_forecast_w": 11500,
+        "live_enabled": false,
+        "load_forecast_w": 1521.2,
+        "pv_forecast_w": 13840,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.627295+00:00",
+      "state": "Optimal",
+      "unit": null
+    },
+    "sensor.franklin_nodered_solar_surplus_w": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.623704+00:00",
+      "state": "1700",
+      "unit": "W"
+    },
+    "sensor.franklin_nodered_target_charge_w": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.621316+00:00",
+      "state": "0",
+      "unit": "W"
+    },
+    "sensor.franklin_nodered_target_discharge_w": {
+      "attributes": {
+        "desired_action": "set_grid_preferred_standby",
+        "live_enabled": false,
+        "reason": "EV/HVAC grid-preferred load active; standby with discharge cap",
+        "route": "override",
+        "write_allowed": false
+      },
+      "friendly_name": null,
+      "last_updated": "2026-05-22T20:17:49.622509+00:00",
+      "state": "0",
+      "unit": "W"
+    },
+    "sensor.franklinwh_operating_mode": {
+      "attributes": {},
+      "friendly_name": "FranklinWH Operating Mode",
+      "last_updated": "2026-05-22T15:39:30.184018+00:00",
+      "state": "Residential 7",
+      "unit": null
+    },
+    "sensor.franklinwh_solar_energy": {
+      "attributes": {},
+      "friendly_name": "FranklinWH  Solar Energy",
+      "last_updated": "2026-05-22T20:15:01.467081+00:00",
+      "state": "59.897",
+      "unit": "kWh"
+    },
+    "sensor.franklinwh_state_of_charge": {
+      "attributes": {},
+      "friendly_name": "FranklinWH  State Of Charge",
+      "last_updated": "2026-05-22T18:50:44.469493+00:00",
+      "state": "85.316",
+      "unit": "%"
+    },
+    "sensor.home_net_grid_balance": {
+      "attributes": {},
+      "friendly_name": "Home Net Grid Balance",
+      "last_updated": "2026-05-22T20:15:01.475427+00:00",
+      "state": "-29.9",
+      "unit": "kWh"
+    },
+    "sensor.home_net_zero_forecast": {
+      "attributes": {},
+      "friendly_name": "Home Net Zero Forecast",
+      "last_updated": "2026-05-22T20:19:00.178403+00:00",
+      "state": "135.6",
+      "unit": "%"
+    },
+    "sensor.home_net_zero_now": {
+      "attributes": {},
+      "friendly_name": "Home Net Zero Now",
+      "last_updated": "2026-05-22T20:15:01.474327+00:00",
+      "state": "244.4",
+      "unit": "%"
+    },
+    "sensor.home_solar_self_consumption": {
+      "attributes": {},
+      "friendly_name": "Home Solar Self Consumption",
+      "last_updated": "2026-05-22T20:15:01.474795+00:00",
+      "state": "32.3",
+      "unit": "%"
+    },
+    "sensor.nodered_ev_chargepoint_decision": {
+      "attributes": {
+        "cph50_schedule_enabled": true,
+        "cph50_schedule_locked": true,
+        "ev_charging": true,
+        "ev_charging_sources": [
+          "facts",
+          "chargepoint_status",
+          "chargepoint_state",
+          "chargepoint_power",
+          "span_power"
+        ],
+        "ev_energy_needed_kwh": 23.3,
+        "ev_soc": 53.700001,
+        "ev_target_soc": 70,
+        "live_enabled": false,
+        "reason": "EV charge candidate present from grid export; waiting 0s start dwell and cooldown active",
+        "span_cph50_power_w": 4770.6,
+        "state": "surplus_candidate",
+        "would_charge": false,
+        "would_stop": false
+      },
+      "friendly_name": "Node-RED EV ChargePoint Decision",
+      "last_updated": "2026-05-22T20:17:49.628500+00:00",
+      "state": "none",
+      "unit": null
+    },
+    "switch.cph50_charging_schedule": {
+      "attributes": {},
+      "friendly_name": "CPH50 Charging Schedule",
+      "last_updated": "2026-05-22T15:39:33.618508+00:00",
+      "state": "on",
+      "unit": null
+    }
+  }
+}

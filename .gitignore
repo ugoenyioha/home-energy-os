@@ -1,0 +1,16 @@
+# macOS noise
+.DS_Store
+**/.DS_Store
+
+# editor cruft
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# old drafts kept as local-only history
+*.bak
+*.bak-*
+
+# anything in a tmp/ subfolder
+tmp/

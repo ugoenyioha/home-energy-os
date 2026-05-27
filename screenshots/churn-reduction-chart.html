@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Churn Reduction: Before and After Retune-Fix Deploy</title>
+  <style>
+    :root {
+      --bg: #101712;
+      --panel: #172019;
+      --paper: #f8f0df;
+      --ink: #f8f0df;
+      --muted: #b8c2b0;
+      --line: rgba(248, 240, 223, 0.18);
+      --warn: #e07a54;
+      --safe: #8fc9a3;
+      --normal: #f4c76d;
+      --override: #ef9a76;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(244,199,109,0.12), transparent 32rem), linear-gradient(135deg, #0c130f, var(--bg));
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .shell { max-width: 1100px; margin: 0 auto; }
+    header { margin-bottom: 28px; padding: 18px 24px; border: 1px solid var(--line); border-radius: 18px; background: rgba(23,32,25,0.78); }
+    h1 { margin: 0 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: 32px; font-weight: 500; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 800px; }
+    .chart-panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(23,32,25,0.85);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.28);
+      padding: 32px 28px 24px;
+    }
+    .chart-wrap { position: relative; }
+    svg { width: 100%; height: auto; display: block; }
+
+    .axis text { fill: var(--muted); font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .axis line, .axis path { stroke: rgba(248,240,223,0.16); stroke-width: 1; }
+    .grid line { stroke: rgba(248,240,223,0.08); stroke-width: 1; stroke-dasharray: 3 4; }
+
+    .bar-write { fill: var(--warn); }
+    .bar-charge { fill: var(--normal); }
+
+    .cutover-line { stroke: var(--safe); stroke-width: 2.2; stroke-dasharray: 8 6; }
+    .cutover-label { fill: var(--safe); font-size: 12px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .bar-label { fill: var(--ink); font-size: 11px; font-weight: 700; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .peak-label { fill: var(--warn); font-size: 13px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .after-label { fill: var(--safe); font-size: 13px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .legend { display: flex; gap: 24px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+    .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+    .swatch { width: 14px; height: 14px; border-radius: 3px; }
+    .swatch.write { background: var(--warn); }
+    .swatch.charge { background: var(--normal); }
+    .swatch.cutover { background: transparent; border-bottom: 2px dashed var(--safe); border-radius: 0; height: 0; width: 24px; }
+
+    .summary { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .stat { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(14,22,17,0.6); }
+    .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .stat .value { font-size: 26px; font-weight: 600; margin-top: 4px; }
+    .stat .value.before { color: var(--warn); }
+    .stat .value.after { color: var(--safe); }
+    .stat .value.delta { color: var(--normal); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>Churn collapses after the retune-fix deploy</h1>
+      <div class="sub">
+        State transitions on <code style="color:var(--paper)">binary_sensor.franklin_nodered_write_allowed</code> and
+        <code style="color:var(--paper)">sensor.franklin_nodered_target_charge_w</code>, counted per local hour from 8:00 to 14:00 PDT on 2026-05-25.
+        The retune-fix landed at 10:33 PDT (17:33 UTC). Same controller, same policy outputs &mdash; just a 15-minute same-action dwell guard and a per-physical-signature executor cooldown.
+      </div>
+    </header>
+
+    <div class="chart-panel">
+      <div class="chart-wrap">
+        <svg viewBox="0 0 1040 460" xmlns="http://www.w3.org/2000/svg">
+          <!-- chart area: x = 80..1000, y = 40..380; bottom = 380 (zero), top = 40 (100 toggles) -->
+          <!-- grid lines -->
+          <g class="grid">
+            <line x1="80" y1="380" x2="1000" y2="380" />
+            <line x1="80" y1="312" x2="1000" y2="312" />
+            <line x1="80" y1="244" x2="1000" y2="244" />
+            <line x1="80" y1="176" x2="1000" y2="176" />
+            <line x1="80" y1="108" x2="1000" y2="108" />
+            <line x1="80" y1="40"  x2="1000" y2="40"  />
+          </g>
+          <!-- y axis -->
+          <g class="axis">
+            <line x1="80" y1="40" x2="80" y2="380" />
+            <text x="70" y="384" text-anchor="end">0</text>
+            <text x="70" y="316" text-anchor="end">20</text>
+            <text x="70" y="248" text-anchor="end">40</text>
+            <text x="70" y="180" text-anchor="end">60</text>
+            <text x="70" y="112" text-anchor="end">80</text>
+            <text x="70" y="44"  text-anchor="end">100</text>
+            <text x="40" y="210" text-anchor="middle" transform="rotate(-90 40 210)" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;fill:var(--muted)">transitions per hour</text>
+          </g>
+          <!-- x axis -->
+          <g class="axis">
+            <line x1="80" y1="380" x2="1000" y2="380" />
+            <text x="160" y="404" text-anchor="middle">08:00 PDT</text>
+            <text x="290" y="404" text-anchor="middle">09:00</text>
+            <text x="420" y="404" text-anchor="middle">10:00</text>
+            <text x="550" y="404" text-anchor="middle">11:00</text>
+            <text x="680" y="404" text-anchor="middle">12:00</text>
+            <text x="810" y="404" text-anchor="middle">13:00</text>
+            <text x="940" y="404" text-anchor="middle">14:00</text>
+            <text x="540" y="430" text-anchor="middle" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;fill:var(--muted)">local hour (2026-05-25)</text>
+          </g>
+
+          <!-- bars: each hour gets 2 bars side by side. Hour-block width = 130; bar width = 50; gap = 8 -->
+          <!-- 08:00 -->
+          <rect class="bar-write"  x="116" y="120" width="50" height="260" />
+          <rect class="bar-charge" x="174" y="220" width="50" height="160" />
+          <text class="bar-label" x="141" y="115">76</text>
+          <text class="bar-label" x="199" y="215">47</text>
+          <!-- 09:00 (peak) -->
+          <rect class="bar-write"  x="246" y="46"  width="50" height="334" />
+          <rect class="bar-charge" x="304" y="200" width="50" height="180" />
+          <text class="bar-label" x="271" y="41">98</text>
+          <text class="bar-label" x="329" y="195">53</text>
+          <!-- 10:00 (cutover hour) -->
+          <rect class="bar-write"  x="376" y="332" width="50" height="48" />
+          <rect class="bar-charge" x="434" y="353" width="50" height="27" />
+          <text class="bar-label" x="401" y="327">14</text>
+          <text class="bar-label" x="459" y="348">8</text>
+          <!-- 11:00 -->
+          <rect class="bar-write"  x="506" y="373" width="50" height="7" />
+          <rect class="bar-charge" x="564" y="378" width="50" height="2" />
+          <text class="bar-label" x="531" y="368">2</text>
+          <text class="bar-label" x="589" y="373">0</text>
+          <!-- 12:00 -->
+          <rect class="bar-write"  x="636" y="367" width="50" height="13" />
+          <rect class="bar-charge" x="694" y="373" width="50" height="7" />
+          <text class="bar-label" x="661" y="362">4</text>
+          <text class="bar-label" x="719" y="368">2</text>
+          <!-- 13:00 -->
+          <rect class="bar-write"  x="766" y="378" width="50" height="2" />
+          <rect class="bar-charge" x="824" y="378" width="50" height="2" />
+          <text class="bar-label" x="791" y="373">0</text>
+          <text class="bar-label" x="849" y="373">0</text>
+          <!-- 14:00 -->
+          <rect class="bar-write"  x="896" y="378" width="50" height="2" />
+          <rect class="bar-charge" x="954" y="378" width="50" height="2" />
+          <text class="bar-label" x="921" y="373">0</text>
+          <text class="bar-label" x="979" y="373">0</text>
+
+          <!-- cutover line at x = 420 (10:33 -> roughly 1/3 into the 10:00 bucket centered at 420) -->
+          <line class="cutover-line" x1="442" y1="30" x2="442" y2="380" />
+          <text class="cutover-label" x="450" y="44">retune-fix deploy 10:33 PDT</text>
+
+          <!-- annotations -->
+          <text class="peak-label" x="271" y="28">peak 98 toggles/hr</text>
+          <text class="after-label" x="820" y="360">0 toggles for 90+ min</text>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="swatch write"></div> binary_sensor.franklin_nodered_write_allowed transitions</div>
+        <div class="legend-item"><div class="swatch charge"></div> sensor.franklin_nodered_target_charge_w transitions</div>
+        <div class="legend-item"><div class="swatch cutover"></div> retune-fix deploy cutover</div>
+      </div>
+
+      <div class="summary">
+        <div class="stat">
+          <div class="label">2h before fix</div>
+          <div class="value before">174 / 98</div>
+          <div class="sub" style="margin-top:4px;font-size:12px">write toggles / target changes</div>
+        </div>
+        <div class="stat">
+          <div class="label">2h after fix</div>
+          <div class="value after">6 / 2</div>
+          <div class="sub" style="margin-top:4px;font-size:12px">write toggles / target changes</div>
+        </div>
+        <div class="stat">
+          <div class="label">Reduction</div>
+          <div class="value delta">97% / 98%</div>
+          <div class="sub" style="margin-top:4px;font-size:12px">in real-world command churn</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

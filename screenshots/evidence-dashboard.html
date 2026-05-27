@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home Energy OS Evidence Dashboard</title>
+<style>
+:root { color-scheme: dark; --bg:#07110e; --panel:#102019; --panel2:#142821; --line:#28453a; --ink:#edf7f1; --muted:#9fb7ab; --solar:#f4c75e; --good:#72d391; --blue:#7bd5ff; --warn:#ffb86b; --red:#ff786f; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+* { box-sizing:border-box; }
+body { margin:0; background: radial-gradient(circle at 18% 0%, rgba(244,199,94,.18), transparent 34rem), radial-gradient(circle at 88% 10%, rgba(123,213,255,.12), transparent 30rem), linear-gradient(135deg,#06100d,#07110e 50%,#040807); color:var(--ink); }
+main { width:min(1500px, calc(100vw - 48px)); margin:0 auto; padding:34px 0 46px; }
+header { display:flex; justify-content:space-between; align-items:end; gap:28px; margin-bottom:22px; }
+h1 { margin:0; font-size:clamp(40px,5vw,76px); letter-spacing:-.06em; line-height:.92; }
+.lede { max-width:820px; color:var(--muted); font-size:18px; line-height:1.5; margin:12px 0 0; }
+.badge { border:1px solid rgba(255,255,255,.16); border-radius:999px; padding:12px 16px; background:rgba(255,255,255,.05); color:#d8e7df; white-space:nowrap; }
+.grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.card { background:rgba(16,32,25,.82); border:1px solid rgba(159,183,171,.18); border-radius:22px; padding:18px; box-shadow:0 24px 80px rgba(0,0,0,.24); }
+.card.wide { grid-column:span 2; }
+.card.full { grid-column:1/-1; }
+.card h2 { margin:0 0 14px; font-size:13px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+.metric { min-height:96px; padding:16px; border:1px solid rgba(159,183,171,.16); border-radius:16px; background:rgba(6,16,13,.5); }
+.metric span { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.1em; font-weight:800; }
+.metric strong { display:block; margin-top:10px; font-size:clamp(22px,2vw,30px); line-height:1.05; overflow-wrap:anywhere; }
+.metric em { display:block; margin-top:10px; font-style:normal; color:#bed0c6; font-size:13px; line-height:1.35; }
+.metric.good strong { color:var(--good); } .metric.solar strong { color:var(--solar); } .metric.blue strong { color:var(--blue); } .metric.warn strong { color:var(--warn); }
+.subgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.flow { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; align-items:stretch; }
+.node { padding:18px; border:1px solid rgba(255,255,255,.14); border-radius:18px; background:rgba(255,255,255,.045); min-height:118px; }
+.node b { display:block; color:#fff; font-size:18px; margin-bottom:8px; }
+.node span { color:var(--muted); font-size:13px; line-height:1.35; }
+.node::after { content:'→'; float:right; color:var(--solar); font-size:28px; }
+.node:last-child::after { content:''; }
+.planes { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.plane { padding:16px; border-radius:16px; background:rgba(244,199,94,.1); border:1px solid rgba(244,199,94,.24); }
+.plane b, .plane span, .plane small { display:block; } .plane span { margin-top:8px; font-size:24px; font-weight:900; } .plane small { margin-top:7px; color:var(--muted); }
+footer { margin-top:18px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<div><h1>A Practical Home Energy OS</h1><p class="lede">A live snapshot of the system: solar generation, Franklin battery policy, SPAN circuit truth, Rivian charging, EMHASS planning, and Node-RED actuation all in one control loop.</p></div>
+<div class="badge">Captured 2026-05-22T20:19:13.443010+00:00</div>
+</header>
+<section class="grid">
+<div class="card wide"><h2>Live Power State</h2><div class="subgrid">
+<div class="metric"><span>Solar Production</span><strong>14.49 kW</strong><em>Franklin live display</em></div>
+<div class="metric"><span>Home Load</span><strong>12.696 kW</strong><em>EV charging included</em></div>
+<div class="metric"><span>Grid</span><strong>1644 W export</strong><em>Still exporting while charging</em></div>
+<div class="metric"><span>Franklin SoC</span><strong>85.0%</strong><em>standby</em></div>
+</div></div>
+<div class="card"><h2>Node-RED State</h2>
+<div class="metric"><span>Controller</span><strong>GRID_PREFERRED_STANDBY</strong><em>EV/HVAC grid-preferred load active; standby with discharge cap</em></div>
+</div>
+<div class="card"><h2>EMHASS Plan</h2>
+<div class="metric"><span>EV Slot</span><strong>11500 W</strong><em>Optimal</em></div>
+</div>
+<div class="card wide"><h2>Rivian / ChargePoint</h2><div class="subgrid">
+<div class="metric"><span>Rivian SoC</span><strong>53.900002% → 70.0%</strong><em>23.0 kWh needed</em></div>
+<div class="metric"><span>ChargePoint</span><strong>Charging</strong><em>11.28 kW charger output</em></div>
+<div class="metric"><span>SPAN EV Circuit</span><strong>4771.0 W</strong><em>Breaker-level source of truth</em></div>
+<div class="metric"><span>Node-RED EV Decision</span><strong>none</strong><em>EV charge candidate present from grid export; waiting 0s start dwell and cooldown active</em></div>
+</div></div>
+<div class="card"><h2>Forecast</h2>
+<div class="metric"><span>Remaining Today</span><strong>45.7 kWh</strong><em>Split-array forecast</em></div>
+</div>
+<div class="card"><h2>Tomorrow</h2>
+<div class="metric"><span>Solar Forecast</span><strong>44.8 kWh</strong><em>5 roof-plane model</em></div>
+</div>
+<div class="card full"><h2>Solar Array Layout</h2><div class="planes"><div class="plane"><b>South 1</b><span>6 panels</span><small>2.6 kW · 180° · tilt 21°</small></div><div class="plane"><b>South 2</b><span>7 panels</span><small>3.1 kW · 180° · tilt 21°</small></div><div class="plane"><b>East</b><span>17 panels</span><small>7.5 kW · 90° · tilt 21°</small></div><div class="plane"><b>West 1</b><span>7 panels</span><small>3.1 kW · 270° · tilt 21°</small></div><div class="plane"><b>West 2</b><span>7 panels</span><small>3.1 kW · 270° · tilt 0°</small></div></div></div>
+<div class="card full"><h2>Control Loop</h2><div class="flow">
+<div class="node"><b>Observe</b><span>Home Assistant normalizes Enphase, Franklin, SPAN, Rivian, ChargePoint, Solcast/Forecast Solar, and PSE-style data.</span></div>
+<div class="node"><b>Plan</b><span>EMHASS proposes deferrable-load slots for the EV and reserve-sensitive battery behavior.</span></div>
+<div class="node"><b>Decide</b><span>Node-RED evaluates safety states, reserve, grid export, target SoC, and schedule lock.</span></div>
+<div class="node"><b>Dwell</b><span>Transient solar spikes are ignored until the opportunity is sustained.</span></div>
+<div class="node"><b>Actuate</b><span>An allowlisted executor presses only known HA buttons and shell commands.</span></div>
+<div class="node"><b>Verify</b><span>SPAN and ChargePoint telemetry prove whether the car actually started drawing power.</span></div>
+</div></div>
+</section>
+<footer>No secrets or credentials are embedded. Values are read-only snapshots from Home Assistant and Node-RED.</footer>
+</main>
+</body>
+</html>
