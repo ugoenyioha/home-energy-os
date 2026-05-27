@@ -5,12 +5,12 @@ description: How a FranklinWH battery, an Enphase solar array, a SPAN panel, thr
 tags: homeassistant, nodered, homeautomation, selfhosted
 canonical_url: https://ugoenyioha.github.io/home-energy-os/article.html
 series: Home Energy OS
-cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png
+cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-live.png
 ---
 
 *How five vendors, two batteries, an EV, and a careful policy engine became one operating system for my house.*
 
-![Live Sankey from the deployed system: 4.5 kW of solar plus 4 kW of grid feeding an 8.6 kW home load, broken down all the way to individual circuits. The 1,638 W Lighting breaker splits into 579 W Cluster (the compute cluster's load isolated by EcoFlow pass-through subtraction), 432 W Office UPS, 338 W Hall/Pantry/Den lights, and so on — a per-circuit breakdown no single vendor can produce.](https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png)
+![Live Sankey from the deployed system: 4.5 kW of solar plus 4 kW of grid feeding an 8.6 kW home load, broken down all the way to individual circuits. The 1,638 W Lighting breaker splits into 579 W Cluster (the compute cluster's load isolated by EcoFlow pass-through subtraction), 432 W Office UPS, 338 W Hall/Pantry/Den lights, and so on — a per-circuit breakdown no single vendor can produce.](https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-live.png)
 
 There is a moment when a solar installation stops feeling like a set of appliances and starts feeling like a distributed control system.
 
