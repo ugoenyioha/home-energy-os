@@ -10,7 +10,7 @@ cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-
 
 *How five vendors, two batteries, an EV, and a careful policy engine became one operating system for my house.*
 
-![Daytime Sankey showing 12 kW of solar production perfectly balanced across grid export, Franklin battery at cap, and home load during a sunny afternoon](https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png)
+![Live Sankey from the deployed system: 4.5 kW of solar plus 4 kW of grid feeding an 8.6 kW home load, broken down all the way to individual circuits. The 1,638 W Lighting breaker splits into 579 W Cluster (the compute cluster's load isolated by EcoFlow pass-through subtraction), 432 W Office UPS, 338 W Hall/Pantry/Den lights, and so on — a per-circuit breakdown no single vendor can produce.](https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png)
 
 There is a moment when a solar installation stops feeling like a set of appliances and starts feeling like a distributed control system.
 
