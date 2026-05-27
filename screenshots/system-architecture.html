@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Home Energy OS Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #101712;
+            display: flex;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .mermaid {
+            background-color: rgba(23, 32, 25, 0.85);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(248, 240, 223, 0.18);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="mermaid">
+        flowchart TB
+            %% Styles
+            classDef control fill:#1f6f52,stroke:#8fc9a3,stroke-width:2px,color:#fff
+            classDef ha fill:#102019,stroke:#8fc9a3,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+            classDef vendor fill:#1e293b,stroke:#64748b,stroke-width:1px,color:#e2e8f0
+            classDef actuator fill:#2d1b0e,stroke:#c98317,stroke-width:1px,color:#f8f0df
+            classDef observer fill:#0f172a,stroke:#3b82f6,stroke-width:1px,color:#e2e8f0
+
+            %% Subgraphs
+            subgraph Data["Vendor Observers (Telemetry)"]
+                E[Enphase Envoy<br><i>per-array prod</i>]:::observer
+                S[SPAN Panel<br><i>per-circuit load</i>]:::observer
+                F_Modbus[FranklinWH Modbus<br><i>fast SoC / metrics</i>]:::observer
+            end
+
+            subgraph Platform["Home Assistant (State Fusion & Event Bus)"]
+                DB[(Recorder / History)]
+                States{State Graph}
+                Optimizer[EMHASS Optimizer<br><i>24h deferrable slots</i>]
+                
+                E -.-> |update| States
+                S -.-> |update| States
+                F_Modbus -.-> |update| States
+                States -.-> DB
+                DB -.-> |historical<br>trends| Optimizer
+            end
+
+            subgraph Engine["Control Plane (Actuation Gate)"]
+                NodeRED[Node-RED<br><i>Policy Gate & Cooldown</i>]:::control
+                Policy[Pure JS Policy Engine<br><i>Stateless Machine</i>]:::control
+                Sentinel[Drift Sentinel<br><i>Anomaly Detection</i>]:::control
+            end
+
+            subgraph Exec["Actuators (Hardware)"]
+                C[ChargePoint CPH50<br><i>EV Charging</i>]:::actuator
+                F_Cloud[FranklinWH Cloud<br><i>Battery Bounds</i>]:::actuator
+                Eco[EcoFlow Relays<br><i>AC Output Limits</i>]:::actuator
+            end
+
+            %% Connections
+            States ===> |live facts| NodeRED
+            Optimizer ===> |slot plan| NodeRED
+            
+            NodeRED <--> |evaluate rules| Policy
+            Sentinel -.-> |audit| Policy
+            Sentinel -.-> |verify| NodeRED
+            
+            NodeRED ===> |safe commands| C
+            NodeRED ===> |safe commands| F_Cloud
+            NodeRED ===> |safe commands| Eco
+            
+            %% Class assignments
+            class Platform ha
+    </div>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#101712',
+                primaryColor: '#1f6f52',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#8fc9a3',
+                lineColor: '#b8c2b0',
+                secondaryColor: '#102019',
+                tertiaryColor: '#1e293b'
+            },
+            flowchart: {
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
