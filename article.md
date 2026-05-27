@@ -14,7 +14,19 @@ Charge the car when the sun is out. It sounds trivial. The interesting part is e
 
 This is the story of that system. It is also a small argument: a working home energy controller cannot be built by a single vendor today, because the substrate it needs is multi-vendor data fusion that the vendors themselves have no reason to ship.
 
-Before a single line of code was written, this entire orchestration was defined as a natural language policy document. It is a plain-English contract detailing exactly what the house is permitted to do, and more importantly, what it is forbidden from doing. The codebase is simply a strict, testable translation of that document—and the system is built to ensure the code never drifts from the contract.
+Before a single line of code was written, this entire orchestration was defined as a natural language policy document. It is a plain-English contract detailing exactly what the house is permitted to do, and more importantly, what it is forbidden from doing. For example, the policy explicitly dictates the conditions under which the house will act:
+
+> **3.1 Normal Solar / Net-Metering Mode**
+> Objective: optimize useful energy value while allowing export.
+>
+> Rules:
+> - Do not raise EV or EcoFlow targets just to avoid export.
+> - Do not treat EcoFlows as dump loads.
+> - Do not create sustained grid import for discretionary charging.
+> - Do not allow Franklin to discharge into discretionary charging.
+> - EMHASS schedules are useful advisory inputs, not the only authority.
+
+The codebase is simply a strict, testable translation of that document—and the system is built to ensure the code never drifts from the contract.
 
 ## The Thesis: Five Vendors, One Policy
 

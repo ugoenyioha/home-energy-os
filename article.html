@@ -125,7 +125,20 @@ result.</p>
 working home energy controller cannot be built by a single vendor today,
 because the substrate it needs is multi-vendor data fusion that the
 vendors themselves have no reason to ship.</p>
-<p>Before a single line of code was written, this entire orchestration was defined as a natural language policy document. It is a plain-English contract detailing exactly what the house is permitted to do, and more importantly, what it is forbidden from doing. The codebase is simply a strict, testable translation of that document—and the system is built to ensure the code never drifts from the contract.</p>
+<p>Before a single line of code was written, this entire orchestration was defined as a natural language policy document. It is a plain-English contract detailing exactly what the house is permitted to do, and more importantly, what it is forbidden from doing. For example, the policy explicitly dictates the conditions under which the house will act:</p>
+
+<blockquote>
+<p><strong>3.1 Normal Solar / Net-Metering Mode</strong><br>
+Objective: optimize useful energy value while allowing export.</p>
+<p>Rules:<br>
+- Do not raise EV or EcoFlow targets just to avoid export.<br>
+- Do not treat EcoFlows as dump loads.<br>
+- Do not create sustained grid import for discretionary charging.<br>
+- Do not allow Franklin to discharge into discretionary charging.<br>
+- EMHASS schedules are useful advisory inputs, not the only authority.</p>
+</blockquote>
+
+<p>The codebase is simply a strict, testable translation of that document—and the system is built to ensure the code never drifts from the contract.</p>
 <h2 id="the-thesis-five-vendors-one-policy">The Thesis: Five Vendors,
 One Policy</h2>
 <p>The hardware in my house comes from five different companies that do
