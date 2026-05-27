@@ -137,7 +137,7 @@ Two additional branches cover edge cases:
 
 The state machine is implemented as a 500-line pure-JavaScript module with no Home Assistant or Node-RED imports, which means it's testable in isolation. The current test suite has 144 cases covering: every state transition, every safety condition, every device-level shed and start scenario, every storm/calibration/outage override. The same module is what Node-RED imports at runtime to make every decision.
 
-![System Architecture: Vendor telemetry flows into Home Assistant's state graph, informing the EMHASS optimizer. Node-RED consumes these live facts and slot plans, evaluates them against the pure JS policy engine, and safely dispatches commands to the actuators while the Drift Sentinel continuously audits the process.](screenshots/system-architecture-light.png)
+[![System Architecture: Vendor telemetry flows into Home Assistant's state graph, informing the EMHASS optimizer. Node-RED consumes these live facts and slot plans, evaluates them against the pure JS policy engine, and safely dispatches commands to the actuators while the Drift Sentinel continuously audits the process.](screenshots/system-architecture-light.png)](screenshots/system-architecture-light.svg)
 
 ## A Bug, a Fix, and the Drift Sentinel
 

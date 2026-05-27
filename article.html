@@ -418,8 +418,10 @@ transition, every safety condition, every device-level shed and start
 scenario, every storm/calibration/outage override. The same module is
 what Node-RED imports at runtime to make every decision.</p>
 <figure>
+<a href="screenshots/system-architecture-light.svg" target="_blank" class="diagram-lightbox" title="Click to view high-resolution SVG">
 <img src="screenshots/system-architecture-light.png"
 alt="System Architecture: Vendor telemetry flows into Home Assistant's state graph, informing the EMHASS optimizer. Node-RED consumes these live facts and slot plans, evaluates them against the pure JS policy engine, and safely dispatches commands to the actuators while the Drift Sentinel continuously audits the process." />
+</a>
 <figcaption aria-hidden="true">System Architecture: Vendor telemetry flows into Home Assistant's state graph, informing the EMHASS optimizer. Node-RED consumes these live facts and slot plans, evaluates them against the pure JS policy engine, and safely dispatches commands to the actuators while the Drift Sentinel continuously audits the process.</figcaption>
 </figure>
 <h2 id="a-bug-a-fix-and-the-drift-sentinel">A Bug, a Fix, and the Drift

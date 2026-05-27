@@ -140,3 +140,24 @@ div.sourceCode pre {
   background: transparent;
   padding: 24px;
 }
+
+/* Lightbox hover effect for the architecture diagram */
+a.diagram-lightbox {
+  display: block;
+  width: min(1120px, calc(100vw - 48px));
+  max-width: none;
+  margin: 44px 50% 24px;
+  transform: translateX(-50%);
+  text-decoration: none;
+}
+a.diagram-lightbox img {
+  margin: 0;
+  transform: none;
+  width: 100%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  cursor: zoom-in;
+}
+a.diagram-lightbox:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 30px 90px rgba(46, 35, 19, 0.25);
+}
