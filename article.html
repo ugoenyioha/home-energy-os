@@ -97,14 +97,14 @@ Energy OS with Home Assistant</h1>
 <p><em>How five vendors, two batteries, an EV, and a careful policy
 engine became one operating system for my house.</em></p>
 <figure>
-<img src="screenshots/evidence-dashboard.png"
-alt="Live evidence dashboard captured the moment the EV started charging from solar surplus" />
+<img src="screenshots/sankey-day-real.png"
+alt="Daytime Sankey showing 12 kW of solar production perfectly balanced across grid export, Franklin battery at cap, and home load during a sunny afternoon" />
 <figcaption aria-hidden="true">Live evidence dashboard captured the
 moment the EV started charging from solar surplus</figcaption>
 </figure>
 <p>There is a moment when a solar installation stops feeling like a set
-of devices and starts feeling like an operating system.</p>
-<p>For me it was a quiet afternoon when the house decided to charge the
+of appliances and starts feeling like a distributed control system.</p>
+<p>The interesting problem is no longer generation or storage alone. It is orchestration across partially trusted, independently operated control planes. For me, that realization came on a quiet afternoon when the house decided to charge the
 Rivian.</p>
 <p>The battery was full enough. The grid was still exporting. The car
 was home, plugged in, and below its target state of charge. The forecast
@@ -164,11 +164,13 @@ on my house for weeks.” Same hardware, completely different capability,
 because the controller knows things about solar export and grid prices
 and forecasts that no single vendor’s app can see.</p>
 <figure>
-<img src="screenshots/data-fusion-sankey.png"
-alt="Cross-vendor data fusion: three vendors land in one HA state graph, and one new metric (compute-only power) emerges from the difference" />
-<figcaption aria-hidden="true">Cross-vendor data fusion: three vendors
-land in one HA state graph, and one new metric (compute-only power)
-emerges from the difference</figcaption>
+<img src="screenshots/sankey-night-real.png"
+alt="The fusion view at 11 PM: 12.8 kW from grid is being absorbed almost entirely by the EV charging session, with the rest split across HVAC, lighting, the office UPS pass-through, and the compute cluster. The same diagram in the daytime would show negative grid flow — solar exporting after covering all loads." />
+<figcaption aria-hidden="true">The fusion view at 11 PM: 12.8 kW from
+grid is being absorbed almost entirely by the EV charging session, with
+the rest split across HVAC, lighting, the office UPS pass-through, and
+the compute cluster. The same diagram in the daytime would show negative
+grid flow — solar exporting after covering all loads.</figcaption>
 </figure>
 <h2 id="the-hardware-is-in-service-of-an-idea">The Hardware Is In
 Service Of An Idea</h2>
@@ -232,6 +234,33 @@ array has its own losses-to-glare profile. The HA forecast model is
 split into five matching solar entries, one per array, so the system can
 reason about the day as a changing shape instead of just a daily
 total.</p>
+<figure>
+<img src="screenshots/array-production-day.png"
+alt="A clean spring day — May 11, 2026, around 121 kWh produced. East arrays (cyan) carry the morning, peaking at 5.7 kW around 11:30 AM; south arrays (salmon) take over through midday at 4.7 kW; west arrays (coral) carry the late afternoon with their own 4.8 kW peak just past 2:30 PM. A single forecast curve would average all three into a fictional bell. Per-array forecasting is what lets the policy engine reason about morning versus afternoon surplus as distinct phenomena, not points on the same line." />
+<figcaption aria-hidden="true">A clean spring day — May 11, 2026, around
+121 kWh produced. East arrays (cyan) carry the morning, peaking at 5.7
+kW around 11:30 AM; south arrays (salmon) take over through midday at
+4.7 kW; west arrays (coral) carry the late afternoon with their own 4.8
+kW peak just past 2:30 PM. A single forecast curve would average all
+three into a fictional bell. Per-array forecasting is what lets the
+policy engine reason about morning versus afternoon surplus as distinct
+phenomena, not points on the same line.</figcaption>
+</figure>
+<figure>
+<img src="screenshots/franklin-apower-outside.png"
+alt="The FranklinWH aPower outside the house, beside the utility disconnect. About 27 kWh of LFP, the home’s backup partition, the policy engine’s most-managed asset." />
+<figcaption aria-hidden="true">The FranklinWH aPower outside the house,
+beside the utility disconnect. About 27 kWh of LFP, the home’s backup
+partition, the policy engine’s most-managed asset.</figcaption>
+</figure>
+<figure>
+<img src="screenshots/span-panel-open.png"
+alt="The SPAN smart panel, door open: every breaker individually metered, every circuit individually controllable. The hardware is the means; the per-circuit metering is what makes the fusion view possible." />
+<figcaption aria-hidden="true">The SPAN smart panel, door open: every
+breaker individually metered, every circuit individually controllable.
+The hardware is the means; the per-circuit metering is what makes the
+fusion view possible.</figcaption>
+</figure>
 <p>The rest of the house adds the constraints the controller has to
 respect:</p>
 <ul>
@@ -572,9 +601,7 @@ the soft-cap problem natively is the day I delete fifty lines of
 state-machine code and keep the other thousand.</p>
 <h2 id="an-operating-system-for-a-house">An Operating System For A
 House</h2>
-<p>There is a moment when a solar installation stops feeling like a set
-of devices and starts feeling like an operating system.</p>
-<p>The transition isn’t dramatic and there isn’t a specific switch you
+<p>Residential energy systems are becoming distributed control systems. The transition isn’t dramatic and there isn’t a specific switch you
 flip. It happens when you stop reading vendor dashboards and start
 reading the fusion view; when “what is the house doing right now”
 becomes a single question with a single answer instead of five different
@@ -608,8 +635,8 @@ out to be exactly enough.</p>
 implementation is in Home Assistant + Node-RED + a small JavaScript
 policy engine + about a dozen Python helpers, with EMHASS as the
 optimizer. None of it is proprietary. Most of it is small. The
-interesting parts are the boundaries between vendors, not the code
-inside any one vendor’s lane.</p>
+interesting parts are the boundaries between vendors, the trust placed in
+their telemetry, and the orchestration that happens between their lanes.</p>
 <p>Happy to compare notes.</p>
 <hr />
 <p><em>The system in this writeup runs on a residential install in the

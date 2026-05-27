@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cross-Vendor Data Fusion - Day</title>
+  <style>
+    :root {
+      --bg: #101712;
+      --paper: #f8f0df;
+      --ink: #f8f0df;
+      --muted: #b8c2b0;
+      --line: rgba(248, 240, 223, 0.18);
+      --solar: #f4c76d;
+      --grid: #ef9a76;
+      --franklin: #8fb7d9;
+      --ecoflow: #b8d88a;
+      --span: #c98317;
+      --safe: #8fc9a3;
+      --enphase: #f4c76d;
+      --policy: #b692e0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 50% -10%, rgba(143,201,163,0.08), transparent 32rem), linear-gradient(135deg, #0c130f, var(--bg));
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .shell { max-width: 1300px; margin: 0 auto; }
+    header { margin-bottom: 26px; padding: 18px 24px; border: 1px solid var(--line); border-radius: 18px; background: rgba(23,32,25,0.78); }
+    h1 { margin: 0 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 900px; }
+
+    .canvas {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(23,32,25,0.85);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.32);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .canvas-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .canvas-sub { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+    svg { width: 100%; height: auto; display: block; }
+
+    .node-label { font-size: 13px; font-weight: 600; fill: var(--ink); }
+    .node-meta { font-size: 11px; fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .node-power { font-size: 14px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .flow-label { font-size: 11px; fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .vendor-tag {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      fill: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>Cross-vendor data fusion in practice</h1>
+      <div class="sub">
+        Live snapshot at 2026-05-11 12:30 PDT, full sun with all panels producing. 
+        Three independent measurements cross-check each other; demonstrating real-time observation and grid export.
+      </div>
+    </header>
+
+    <div class="canvas">
+      <div class="canvas-title">Live power flow &middot; what each vendor sees</div>
+      <svg viewBox="0 0 1240 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="solar-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#f4c76d" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#f4c76d" stop-opacity="0.25"/>
+          </linearGradient>
+          <linearGradient id="grid-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#ef9a76" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#ef9a76" stop-opacity="0.25"/>
+          </linearGradient>
+          <linearGradient id="home-flow" x1="0" x2="1">
+            <stop offset="0" stop-color="#8fc9a3" stop-opacity="0.30"/>
+            <stop offset="1" stop-color="#8fc9a3" stop-opacity="0.10"/>
+          </linearGradient>
+        </defs>
+
+        <!-- left column: sources -->
+        <g>
+          <!-- Enphase Array Breakdown -->
+          <rect x="60" y="20" width="140" height="150" rx="12" fill="rgba(244,199,109,0.10)" stroke="var(--solar)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="38" text-anchor="middle">Enphase Arrays</text>
+          
+          <text class="node-label" x="130" y="60" text-anchor="middle">East</text>
+          <text class="node-power" x="130" y="75" text-anchor="middle" fill="var(--solar)">4,500 W</text>
+          
+          <text class="node-label" x="130" y="100" text-anchor="middle">South 1 &amp; 2</text>
+          <text class="node-power" x="130" y="115" text-anchor="middle" fill="var(--solar)">4,600 W</text>
+
+          <text class="node-label" x="130" y="140" text-anchor="middle">West 1 &amp; 2</text>
+          <text class="node-power" x="130" y="155" text-anchor="middle" fill="var(--solar)">3,000 W</text>
+
+          <rect x="60" y="190" width="140" height="74" rx="12" fill="rgba(143,183,217,0.10)" stroke="var(--franklin)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="208" text-anchor="middle">FranklinWH</text>
+          <text class="node-label" x="130" y="228" text-anchor="middle">Battery</text>
+          <text class="node-power" x="130" y="253" text-anchor="middle" fill="var(--franklin)">0 W &middot; 85%</text>
+          
+          <rect x="60" y="290" width="140" height="74" rx="12" fill="rgba(239,154,118,0.10)" stroke="var(--grid)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="130" y="308" text-anchor="middle">SPAN main feed</text>
+          <text class="node-label" x="130" y="328" text-anchor="middle">Grid Export</text>
+          <text class="node-power" x="130" y="353" text-anchor="middle" fill="var(--grid)">-8,100 W</text>
+        </g>
+
+        <!-- center: Home Assistant fusion node -->
+        <g>
+          <rect x="370" y="150" width="180" height="120" rx="14" fill="rgba(143,201,163,0.10)" stroke="var(--safe)" stroke-opacity="0.6" stroke-dasharray="4 4"/>
+          <text class="vendor-tag" x="460" y="170" text-anchor="middle">Home Assistant</text>
+          <text class="node-label" x="460" y="194" text-anchor="middle">Fused state graph</text>
+          <text class="node-meta" x="460" y="216" text-anchor="middle">Total Solar: 12.1 kW</text>
+          <text class="node-meta" x="460" y="232" text-anchor="middle">Total Load: 4.0 kW</text>
+          <text class="node-meta" x="460" y="248" text-anchor="middle">recorder + statistics</text>
+        </g>
+
+        <!-- right: Home aggregate then circuits -->
+        <g>
+          <rect x="700" y="170" width="140" height="80" rx="12" fill="rgba(143,201,163,0.12)" stroke="var(--safe)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="770" y="190" text-anchor="middle">Home Load</text>
+          <text class="node-meta" x="770" y="208" text-anchor="middle">SPAN main</text>
+          <text class="node-power" x="770" y="234" text-anchor="middle" fill="var(--safe)">4,000 W</text>
+
+          <!-- circuit branches -->
+          <!-- HVAC -->
+          <rect x="940" y="58" width="240" height="56" rx="12" fill="rgba(201,131,23,0.10)" stroke="var(--span)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="950" y="76">SPAN circuit "HVAC"</text>
+          <text class="node-label" x="950" y="95">A/C Condenser</text>
+          <text class="node-power" x="1170" y="98" text-anchor="end" fill="var(--span)">1,600 W</text>
+
+          <!-- Lighting circuit (with cluster) -->
+          <rect x="940" y="130" width="240" height="116" rx="12" fill="rgba(201,131,23,0.10)" stroke="var(--span)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="950" y="148">SPAN circuit "Lighting"</text>
+          <text class="node-meta" x="950" y="165">1,200 W total (one breaker)</text>
+          <!-- subdivision via D3M -->
+          <line x1="950" y1="177" x2="1170" y2="177" stroke="var(--line)" stroke-dasharray="3 3"/>
+          <text x="950" y="197" class="node-label" fill="var(--ecoflow)">— Compute cluster</text>
+          <text x="1170" y="197" class="node-power" text-anchor="end" fill="var(--ecoflow)">568 W</text>
+          <text x="950" y="214" class="node-meta">via Delta 3 Max pass-through</text>
+          <text x="950" y="232" class="node-label" fill="var(--solar)">— Lights only</text>
+          <text x="1170" y="232" class="node-power" text-anchor="end" fill="var(--solar)">632 W</text>
+
+          <!-- Office UPS via D2M -->
+          <rect x="940" y="266" width="240" height="56" rx="12" fill="rgba(184,216,138,0.10)" stroke="var(--ecoflow)" stroke-opacity="0.5"/>
+          <text class="vendor-tag" x="950" y="284">Delta 2 Max</text>
+          <text class="node-label" x="950" y="303">Office UPS pass-through</text>
+          <text class="node-power" x="1170" y="306" text-anchor="end" fill="var(--ecoflow)">350 W</text>
+
+          <!-- Kitchen + other -->
+          <rect x="940" y="340" width="240" height="56" rx="12" fill="rgba(248,240,223,0.04)" stroke="var(--line)"/>
+          <text class="vendor-tag" x="950" y="358">SPAN circuits</text>
+          <text class="node-label" x="950" y="377">Kitchen / Other</text>
+          <text class="node-power" x="1170" y="380" text-anchor="end" fill="var(--paper)">850 W</text>
+        </g>
+
+        <!-- flows: solar -> HA -->
+        <path d="M 200 95  C 280 95,  290 180, 370 195" fill="none" stroke="url(#solar-flow)" stroke-width="28" stroke-linecap="round"/>
+        <path d="M 200 327 C 280 327, 290 230, 370 215" fill="none" stroke="url(#grid-flow)" stroke-width="18" stroke-linecap="round"/>
+        <path d="M 200 227 C 280 227, 290 205, 370 205" fill="none" stroke="rgba(143,183,217,0.18)" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 5"/>
+
+        <!-- HA -> home load -->
+        <path d="M 550 210 C 610 210, 630 210, 700 210" fill="none" stroke="url(#home-flow)" stroke-width="24" stroke-linecap="round"/>
+
+        <!-- home load -> circuits -->
+        <path d="M 840 210 C 880 86, 910 86, 940 86" fill="none" stroke="url(#home-flow)" stroke-width="12" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 840 210 C 880 188, 910 188, 940 188" fill="none" stroke="url(#home-flow)" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 840 210 C 880 294, 910 294, 940 294" fill="none" stroke="url(#home-flow)" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+        <path d="M 840 210 C 880 368, 910 368, 940 368" fill="none" stroke="url(#home-flow)" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+
+        <!-- HA inbound badge -->
+        <text class="flow-label" x="284" y="110">solar.production</text>
+        <text class="flow-label" x="284" y="270">grid.power_w (export)</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

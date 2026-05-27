@@ -1,8 +1,16 @@
-# A Practical Home Energy OS with Home Assistant
+---
+title: A Practical Home Energy OS with Home Assistant
+published: false
+description: How a FranklinWH battery, an Enphase solar array, a SPAN panel, three EcoFlows, and a Rivian became one coherent controller using Home Assistant, Node-RED, and a small policy engine.
+tags: homeassistant, nodered, homeautomation, selfhosted
+canonical_url: https://ugoenyioha.github.io/home-energy-os/article.html
+series: Home Energy OS
+cover_image: https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png
+---
 
 *How five vendors, two batteries, an EV, and a careful policy engine became one operating system for my house.*
 
-![Daytime Sankey showing 12 kW of solar production perfectly balanced across grid export, Franklin battery at cap, and home load during a sunny afternoon](screenshots/sankey-day-real.png)
+![Daytime Sankey showing 12 kW of solar production perfectly balanced across grid export, Franklin battery at cap, and home load during a sunny afternoon](https://ugoenyioha.github.io/home-energy-os/screenshots/sankey-day-real.png)
 
 There is a moment when a solar installation stops feeling like a set of appliances and starts feeling like a distributed control system.
 
@@ -32,7 +40,7 @@ Home Assistant is the substrate that makes the combination possible. Not because
 
 The thesis of this writeup is straightforward: **the interesting capabilities are emergent from the fusion, not present in any single product**. The Reddit thread that landed in r/FranklinWH this week makes this concrete. A homeowner asked whether you could cap the FranklinWH battery at 80% while still discharging below it during peak hours. The current answer from FranklinWH alone is "no, not really" — the standby toggle that caps the SoC is too blunt for time-of-use arbitrage. The fusion answer is "yes, and it's been running on my house for weeks." Same hardware, completely different capability, because the controller knows things about solar export and grid prices and forecasts that no single vendor's app can see.
 
-![The fusion view at 11 PM: 12.8 kW from grid is being absorbed almost entirely by the EV charging session, with the rest split across HVAC, lighting, the office UPS pass-through, and the compute cluster. The same diagram in the daytime would show negative grid flow — solar exporting after covering all loads.](screenshots/sankey-night-real.png)
+![Cross-vendor data fusion: three vendors land in one HA state graph, and one new metric (compute-only power) emerges from the difference](https://ugoenyioha.github.io/home-energy-os/screenshots/data-fusion-sankey.png)
 
 ## The Hardware Is In Service Of An Idea
 
@@ -47,12 +55,6 @@ The solar array is large enough that the control problem is worth solving. 44 Si
 | West 2 | 7 | 3.08 | 270° | flat |
 
 A single forecast curve does not describe this roof well. Morning, noon, and afternoon behave differently — east in the morning, south at midday, west arrays carrying the late afternoon — and the flat west array has its own losses-to-glare profile. The HA forecast model is split into five matching solar entries, one per array, so the system can reason about the day as a changing shape instead of just a daily total.
-
-![A clean spring day — May 11, 2026, around 121 kWh produced. East arrays (cyan) carry the morning, peaking at 5.7 kW around 11:30 AM; south arrays (salmon) take over through midday at 4.7 kW; west arrays (coral) carry the late afternoon with their own 4.8 kW peak just past 2:30 PM. A single forecast curve would average all three into a fictional bell. Per-array forecasting is what lets the policy engine reason about morning versus afternoon surplus as distinct phenomena, not points on the same line.](screenshots/array-production-day.png)
-
-![The FranklinWH aPower outside the house, beside the utility disconnect. About 27 kWh of LFP, the home's backup partition, the policy engine's most-managed asset.](screenshots/franklin-apower-outside.png)
-
-![The SPAN smart panel, door open: every breaker individually metered, every circuit individually controllable. The hardware is the means; the per-circuit metering is what makes the fusion view possible.](screenshots/span-panel-open.png)
 
 The rest of the house adds the constraints the controller has to respect:
 
@@ -133,7 +135,7 @@ Two additional branches cover edge cases:
 
 The state machine is implemented as a 500-line pure-JavaScript module with no Home Assistant or Node-RED imports, which means it's testable in isolation. The current test suite has 144 cases covering: every state transition, every safety condition, every device-level shed and start scenario, every storm/calibration/outage override. The same module is what Node-RED imports at runtime to make every decision.
 
-![Policy engine state machine: Franklin policy modes plus Rivian and EcoFlow advisory lanes, with transition triggers labelled](screenshots/state-machine-policy-engine.png)
+![Policy engine state machine: Franklin policy modes plus Rivian and EcoFlow advisory lanes, with transition triggers labelled](https://ugoenyioha.github.io/home-energy-os/screenshots/state-machine-policy-engine.png)
 
 ## A Bug, a Fix, and the Drift Sentinel
 
@@ -147,7 +149,7 @@ The fix was small. Pin the EcoFlow's `target_soc` to the device's current SoC (s
 
 The whole episode is in the project's implementation plan with the specific commit hashes, the SPAN/EcoFlow recordings that caught it, and the synthetic shed test that proved the fix. None of that is interesting. The interesting part is the meta-lesson.
 
-![Hour-by-hour command churn collapses after the retune-fix deploy at 10:33 PDT — 97% reduction in write-gate toggles, 98% in target-change events](screenshots/churn-reduction-chart.png)
+![Hour-by-hour command churn collapses after the retune-fix deploy at 10:33 PDT — 97% reduction in write-gate toggles, 98% in target-change events](https://ugoenyioha.github.io/home-energy-os/screenshots/churn-reduction-chart.png)
 
 I built a small service called the **drift sentinel** that runs every five minutes on the HA host, independent of Node-RED. It does two things. First, it checks that the policy engine binary deployed on the host matches the policy engine binary in the repository and matches the version embedded in the Node-RED flow's bundled execution context. If any of the three checksums disagree, the sentinel raises an alert. Second, it re-runs the policy engine against the current HA state and compares the result to whatever Node-RED most recently published. If the live controller disagrees with what the latest policy would say, the sentinel raises an alert.
 
@@ -155,7 +157,7 @@ The sentinel is the thing that would have caught the shed bug in the first hour 
 
 The sentinel is the closest thing this system has to a "test in production." It's the same idea as a synthetic monitor for a web service: you run a small, regular, externally-verifiable check that the thing under test is in a known good state. For a home energy controller, that's the difference between a system that works on the day you wrote it and a system that keeps working on the day you forgot you wrote it.
 
-![Drift sentinel reporting aligned: three independent checksums agree, behavioral re-execution matches what Node-RED published, no writes from the sentinel itself](screenshots/drift-sentinel-card.png)
+![Drift sentinel reporting aligned: three independent checksums agree, behavioral re-execution matches what Node-RED published, no writes from the sentinel itself](https://ugoenyioha.github.io/home-energy-os/screenshots/drift-sentinel-card.png)
 
 ## Refusing to Do Things
 
@@ -208,7 +210,7 @@ Residential energy systems are becoming distributed control systems. The transit
 
 It happens when refusing to do something becomes the default and acting becomes the exception. When five vendors' state graphs collapse into one policy and one history. When a contract test gates the next deploy and a drift sentinel gates the live system. When the most boring possible outcome — four hours of steady state on a sunny afternoon with the battery at cap and no commands flowing — is recognized as the point of the work, not the absence of it.
 
-![The deployed live dashboard during a steady-state afternoon: Franklin at cap in SOLAR_HOLD, EV at target, EcoFlows waiting for an EMHASS slot, live gate suppressed because Franklin readback is already aligned — exactly what nothing-to-do looks like in production](screenshots/live-dashboard.png)
+![The deployed live dashboard during a steady-state afternoon: Franklin at cap in SOLAR_HOLD, EV at target, EcoFlows waiting for an EMHASS slot, live gate suppressed because Franklin readback is already aligned — exactly what nothing-to-do looks like in production](https://ugoenyioha.github.io/home-energy-os/screenshots/live-dashboard.png)
 
 The Reddit thread that pushed me to write this up asked a small question: can you cap the battery at 80 % but still discharge during peak hours? The answer involves a 1,000-line policy engine, a drift sentinel, a multi-vendor data fusion, and three EcoFlows that nobody asked about. That isn't the right answer for everyone. For some homes it's wildly more than is needed. For mine, after the third storm season and the second EV and the compute cluster on a shared breaker, it turned out to be exactly enough.
 
