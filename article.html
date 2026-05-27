@@ -368,6 +368,11 @@ controller refuses to allocate the surplus to a discretionary load. The
 EV will not start charging on a single source’s claim of surplus,
 because a single source can be wrong, and the cost of getting it wrong
 is unintended grid import or an unexpected Franklin discharge.</p>
+<figure>
+<img src="screenshots/array-production-morning.png"
+alt="Live per-array telemetry from the Enphase Envoy, captured during the morning ramp. East-facing arrays (cyan) hit 4.2 kW by 8:25 AM while South contributes ~2 kW and West barely participates at ~700 W." />
+<figcaption aria-hidden="true">Live per-array telemetry from the Enphase Envoy, captured during the morning ramp. East-facing arrays (cyan) hit 4.2 kW by 8:25 AM while South contributes ~2 kW and West barely participates at ~700 W. This is one of the four cross-checked sources the controller compares before declaring solar surplus exists — a single aggregated production number would hide this asymmetry entirely.</figcaption>
+</figure>
 <p><strong>Storm awareness that doesn’t depend on the storm.</strong>
 The local NWS alerts, FranklinWH’s own native storm flag, and EcoFlow’s
 storm-protection status are three independent signals about the same

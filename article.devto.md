@@ -116,6 +116,8 @@ A snapshot this afternoon: SPAN reports 735 W, D3M reports 562 W passing through
 
 If they agree, the controller proceeds. If two agree and one disagrees by a small amount, the controller picks the most conservative and notes the discrepancy. If multiple sources disagree by a lot, the controller refuses to allocate the surplus to a discretionary load. The EV will not start charging on a single source's claim of surplus, because a single source can be wrong, and the cost of getting it wrong is unintended grid import or an unexpected Franklin discharge.
 
+![Live per-array telemetry from the Enphase Envoy, captured during the morning ramp. East-facing arrays (cyan) hit 4.2 kW by 8:25 AM while South contributes ~2 kW and West barely participates at ~700 W. This is one of the four cross-checked sources the controller compares before declaring solar surplus exists — a single aggregated production number would hide this asymmetry entirely.](https://ugoenyioha.github.io/home-energy-os/screenshots/array-production-morning.png)
+
 **Storm awareness that doesn't depend on the storm.** The local NWS alerts, FranklinWH's own native storm flag, and EcoFlow's storm-protection status are three independent signals about the same expected weather event. The controller doesn't need all three to agree before it switches the policy into pre-storm grid-fill mode — but it does require that the chosen safe-import budget come from SPAN's main-feed headroom measurement rather than any vendor's assumption.
 
 These are all small things. They add up to a controller that doesn't get fooled by one bad sensor, one stale forecast, or one ambiguous cloud value.
