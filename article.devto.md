@@ -110,20 +110,24 @@ These are all small things. They add up to a controller that doesn't get fooled 
 
 The Reddit thread referenced earlier was about something specific. A homeowner wanted to cap the FranklinWH battery at 80 % to avoid spending most of its life at 100 % (which is harder on lithium cells than people realize). FranklinWH has an undocumented standby toggle on its cloud API that holds the battery at the cap. The objection in the thread was sharp: if you turn standby on, the battery never discharges, so you lose your time-of-use peak shaving.
 
-The fix is dynamic standby. Rather than a single user-selected "max SoC" setting, the controller treats the standby toggle as one mode in a state machine driven by live conditions. The cascade for a normal day, with `cap = 85 %` and `daylight threshold = 500 W`, is:
+The fix is dynamic standby. Rather than a single user-selected "max SoC" setting, the controller treats the standby toggle as one mode in a state machine driven by live conditions. The cascade for a normal day, with `cap = 85 %`, `deadband = 2 %`, and `daylight threshold = 500 W`, is:
 
-```
-if Franklin at cap AND real solar export is happening
-  -> SOLAR_HOLD (TOU profile = standby, charge limit = 0, discharge limit = 0)
+```python
+if battery.soc >= cap and grid.is_exporting():
+    # Earn our keep: hold the cap as long as we are pushing to the grid
+    return Mode.SOLAR_HOLD(profile="standby", charge=0, discharge=0)
 
-elif Franklin below cap-deadband AND surplus is available
-  -> SOLAR_FILL (TOU profile = solar-fill, charge limit = surplus budget)
+elif battery.soc < (cap - deadband) and solar.surplus > 0:
+    # Under cap with room to charge: absorb the surplus
+    return Mode.SOLAR_FILL(profile="solar-fill", charge=solar.surplus)
 
-elif solar power above daylight threshold AND no usable surplus
-  -> SOLAR_HOLD via daylightDeficit (don't drain battery while sun is partly here)
+elif solar.production > daylight_threshold and solar.surplus <= 0:
+    # Sun is up but home load consumes it all: don't drain the battery yet
+    return Mode.SOLAR_HOLD(reason="daylight_deficit")
 
-else
-  -> SELF_CONSUMPTION (TOU profile = time_of_use, limits = 20 kW / 20 kW)
+else:
+    # Evening, heavy clouds, or night: release the cap for peak shaving
+    return Mode.SELF_CONSUMPTION(profile="time_of_use", limits="20kW / 20kW")
 ```
 
 This is the soft cap homeowners are asking for. The battery holds at 85 % whenever there is real solar export to support that hold — *exactly when the hold is earning its keep*. The moment surplus disappears and solar drops below the daylight threshold, the controller releases standby and the battery is fully available to cover the evening load and TOU peak hours, exactly as it would be without any cap at all.
